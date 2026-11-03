@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iris-research-lab.github.io/schemas/people.schema.json",
+  "title": "IRIS Lab people",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["id", "name", "role"],
+    "properties": {
+      "id": { "description": "Unique, stable id: firstname-lastname in lowercase.", "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+      "name": { "type": "string", "minLength": 1 },
+      "role": {
+        "description": "pi, postdoc, phd, ms, undergrad, or visitor. For alumni, keep the role they held and add an 'alumni' object.",
+        "enum": ["pi", "postdoc", "phd", "ms", "undergrad", "visitor"]
+      },
+      "title": { "description": "Optional custom subtitle shown under the name.", "type": "string" },
+      "photo": {
+        "description": "Absolute URL, normally https://iris-research-lab.github.io/assets/images/people/<id>.jpg (square-ish, ~600px).",
+        "type": "string",
+        "pattern": "^https://"
+      },
+      "interests": { "type": "array", "items": { "type": "string", "minLength": 1 }, "maxItems": 5 },
+      "links": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "website": { "type": "string", "pattern": "^https?://" },
+          "email": { "type": "string", "format": "email" },
+          "scholar": { "type": "string", "pattern": "^https://scholar\\.google\\.com/" },
+          "github": { "type": "string", "pattern": "^https://github\\.com/" },
+          "linkedin": { "type": "string", "pattern": "^https://(www\\.)?linkedin\\.com/" },
+          "orcid": { "type": "string", "pattern": "^https://orcid\\.org/" },
+          "bluesky": { "type": "string", "pattern": "^https://bsky\\.app/" },
+          "twitter": { "type": "string", "pattern": "^https://(twitter|x)\\.com/" }
+        }
+      },
+      "alumni": {
+        "description": "Add this once someone leaves the lab.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["years"],
+        "properties": {
+          "years": { "description": "e.g. '2026-2031'", "type": "string" },
+          "now": { "description": "e.g. 'Research Scientist at Google'", "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,221 @@
+[
+  {
+    "key": "hoak_thesis_2026",
+    "title": "Uncovering the Mechanisms of Adversarial Vulnerability in Vision AI Models",
+    "authors": "Blaine Hoak",
+    "venue": "University of Wisconsin-Madison",
+    "year": 2026,
+    "group": "thesis",
+    "lab": false,
+    "links": [
+      { "label": "Paper", "url": "https://digital.library.wisc.edu/1711.dl/WT6XHTSXW3F2P85" }
+    ]
+  },
+  {
+    "key": "hoak_synthetic_2025",
+    "title": "On Synthetic Texture Datasets: Challenges, Creation, and Curation",
+    "authors": "Blaine Hoak and Patrick McDaniel",
+    "venue": "European Conference on Artificial Intelligence (ECAI)",
+    "year": 2025,
+    "group": "conference",
+    "lab": false,
+    "image": "https://iris-research-lab.github.io/assets/images/publications/2025_synthetic_textures.png",
+    "links": [
+      { "label": "Paper", "url": "https://arxiv.org/abs/2409.10297" },
+      { "label": "Dataset", "url": "https://zenodo.org/records/14199831" }
+    ],
+    "talkbadge": "Selected for Long Oral Presentation"
+  },
+  {
+    "key": "hoak_alignment_2025",
+    "title": "Alignment and Adversarial Robustness: Are More Human-Like Models More Secure?",
+    "authors": "Blaine Hoak* and Kunyang Li* and Patrick McDaniel",
+    "venue": "International Workshop on Security and Privacy-Preserving AI/ML (SPAIML)",
+    "year": 2025,
+    "group": "workshop",
+    "lab": false,
+    "image": "https://iris-research-lab.github.io/assets/images/publications/2025_alignment_robustness.png",
+    "links": [
+      { "label": "Paper", "url": "https://arxiv.org/abs/2502.12377" },
+      { "label": "Code", "url": "https://github.com/kyangl/alignment-security" }
+    ],
+    "authornote": "* indicates equal contribution"
+  },
+  {
+    "key": "li_robustness_2025",
+    "title": "On the Robustness Tradeoff in Fine-Tuning",
+    "authors": "Kunyang Li and Jean-Charles Noirot Ferrand and Ryan Sheatsley and Blaine Hoak and Yohan Beugin and Eric Pauley and Patrick McDaniel",
+    "venue": "IEEE/CVF International Conference on Computer Vision (ICCV)",
+    "year": 2025,
+    "group": "conference",
+    "lab": false,
+    "links": [
+      { "label": "Paper", "url": "https://arxiv.org/abs/2503.14836" }
+    ]
+  },
+  {
+    "key": "hoak_err_2025",
+    "title": "Err on the Side of Texture: Texture Bias on Real Data",
+    "authors": "Blaine Hoak and Ryan Sheatsley and Patrick McDaniel",
+    "venue": "IEEE Conference on Secure and Trustworthy Machine Learning (SaTML)",
+    "year": 2025,
+    "group": "conference",
+    "lab": false,
+    "image": "https://iris-research-lab.github.io/assets/images/publications/2024_errontextures.png",
+    "links": [
+      { "label": "Paper", "url": "https://arxiv.org/abs/2412.10597" },
+      { "label": "Code", "url": "https://github.com/blainehoak/err-on-textures" },
+      { "label": "Poster", "url": "https://www.hoak.me/assets/slides_posters_other/2024_errontextures_poster.pdf" }
+    ]
+  },
+  {
+    "key": "pauley_secure_2025",
+    "title": "Secure IP Address Allocation at Cloud Scale",
+    "authors": "Eric Pauley and Kyle Domico and Blaine Hoak and Ryan Sheatsley and Quinn Burke and Yohan Beugin and Engin Kirda and Patrick McDaniel",
+    "venue": "Network and Distributed Systems Security Symposium (NDSS)",
+    "year": 2025,
+    "group": "conference",
+    "lab": false,
+    "links": [
+      { "label": "Paper", "url": "https://arxiv.org/abs/2210.14999" }
+    ]
+  },
+  {
+    "key": "hoak_explorations_2024",
+    "title": "Explorations in Texture Learning",
+    "authors": "Blaine Hoak and Patrick McDaniel",
+    "venue": "International Conference on Learning Representations (ICLR) Tiny Papers Track",
+    "year": 2024,
+    "group": "conference",
+    "lab": false,
+    "image": "https://iris-research-lab.github.io/assets/images/publications/2024_explorations_bibs.png",
+    "links": [
+      { "label": "Paper", "url": "https://arxiv.org/abs/2403.09543" },
+      { "label": "Code", "url": "https://github.com/blainehoak/texture-learning" },
+      { "label": "Poster", "url": "https://www.hoak.me/assets/slides_posters_other/2024_explorations_texture_learning_ICLR.pdf" },
+      { "label": "Blog", "url": "https://medium.com/@blainehoak/explorations-in-texture-learning-5105d7d2406c" }
+    ]
+  },
+  {
+    "key": "hoak_space_2023",
+    "title": "The Space of Adversarial Strategies",
+    "authors": "Blaine Hoak* and Ryan Sheatsley* and Eric Pauley and Patrick McDaniel",
+    "venue": "USENIX Security Symposium",
+    "year": 2023,
+    "group": "conference",
+    "lab": false,
+    "image": "https://iris-research-lab.github.io/assets/images/publications/2023_usenix_decomp.png",
+    "links": [
+      { "label": "Paper", "url": "https://www.usenix.org/conference/usenixsecurity23/presentation/sheatsley" },
+      { "label": "Code", "url": "https://github.com/sheatsley/attacks" },
+      { "label": "Talk", "url": "https://www.youtube.com/watch?v=2NtITExkv5M" },
+      { "label": "Slides", "url": "https://www.hoak.me/assets/slides_posters_other/2023-usenix-strategies-site.pdf" }
+    ],
+    "authornote": "* indicates equal contribution"
+  },
+  {
+    "key": "beugin_building_2022",
+    "title": "Building a Privacy-Preserving Smart Camera System",
+    "authors": "Yohan Beugin and Quinn Burke and Blaine Hoak and Ryan Sheatsley and Eric Pauley and Gang Tan and Syed Rafiul Hussain and Patrick McDaniel",
+    "venue": "Proceedings on Privacy Enhancing Technologies Symposium (PETS)",
+    "year": 2022,
+    "group": "conference",
+    "lab": false,
+    "links": [
+      { "label": "Paper", "url": "https://arxiv.org/abs/2201.09338" }
+    ]
+  },
+  {
+    "key": "pauley_measuring_2022",
+    "title": "Measuring and Mitigating the Risk of IP Reuse on Public Clouds",
+    "authors": "Eric Pauley and Ryan Sheatsley and Blaine Hoak and Quinn Burke and Yohan Beugin and Patrick McDaniel",
+    "venue": "IEEE Symposium on Security and Privacy (SP)",
+    "year": 2022,
+    "group": "conference",
+    "lab": false,
+    "links": [
+      { "label": "Paper", "url": "https://arxiv.org/abs/2204.05122" }
+    ]
+  },
+  {
+    "key": "sheatsley_robustness_2021",
+    "title": "On the Robustness of Domain Constraints",
+    "authors": "Ryan Sheatsley and Blaine Hoak and Eric Pauley and Yohan Beugin and Michael J. Weisman and Patrick McDaniel",
+    "venue": "ACM SIGSAC Conference on Computer and Communications Security (CCS)",
+    "year": 2021,
+    "group": "conference",
+    "lab": false,
+    "links": [
+      { "label": "Paper", "url": "https://arxiv.org/pdf/2105.08619" }
+    ]
+  },
+  {
+    "key": "king_parteetor_2024",
+    "title": "ParTEETor: A System for Partial Deployments of TEEs within Tor",
+    "authors": "Rachel King and Quinn Burke and Yohan Beugin and Blaine Hoak and Kunyang Li and Eric Pauley and Ryan Sheatsley and Patrick McDaniel",
+    "venue": "Workshop on Privacy in the Electronic Society (WPES)",
+    "year": 2024,
+    "group": "workshop",
+    "lab": false,
+    "links": [
+      { "label": "Paper", "url": "https://dl.acm.org/doi/10.1145/3689943.3696203" }
+    ]
+  },
+  {
+    "key": "burke2023securing",
+    "title": "Securing Cloud File Systems with Trusted Execution",
+    "authors": "Quinn Burke and Yohan Beugin and Blaine Hoak and Rachel King and Eric Pauley and Ryan Sheatsley and Mingli Yu and Ting He and Thomas La Porta and Patrick McDaniel",
+    "venue": "IEEE Transactions on Dependable and Secure Computing (TDSC)",
+    "year": 2024,
+    "group": "journal",
+    "lab": false,
+    "links": [
+      { "label": "Paper", "url": "https://arxiv.org/abs/2305.18639" }
+    ]
+  },
+  {
+    "key": "tiot22_beugin",
+    "title": "Privacy-Preserving Protocols for Smart Cameras and Other IoT Devices",
+    "authors": "Yohan Beugin and Quinn Burke and Blaine Hoak and Ryan Sheatsley and Eric Pauley and Gang Tan and Syed Rafiul Hussain and Patrick McDaniel",
+    "venue": "arXiv",
+    "year": 2022,
+    "group": "techreport",
+    "lab": false,
+    "links": [
+      { "label": "Paper", "url": "https://arxiv.org/abs/2208.09776" }
+    ]
+  },
+  {
+    "key": "heon2023systematic",
+    "title": "Systematic Evaluation of Geolocation Privacy Mechanisms",
+    "authors": "Alban Héon and Ryan Sheatsley and Quinn Burke and Blaine Hoak and Eric Pauley and Yohan Beugin and Patrick McDaniel",
+    "venue": "arXiv",
+    "year": 2023,
+    "group": "techreport",
+    "lab": false,
+    "links": [
+      { "label": "Paper", "url": "https://arxiv.org/abs/2309.06263" }
+    ]
+  },
+  {
+    "key": "hoak_backdoors_2025",
+    "title": "Robustness Under Texture Transformations: Exploiting Natural Texture Backdoors in Vision Models",
+    "authors": "Blaine Hoak and Kunyang Li and Kyle Domico and Patrick McDaniel",
+    "venue": "Under review",
+    "year": 2025,
+    "group": "submission",
+    "lab": false
+  },
+  {
+    "key": "abdullah_memorization_2023",
+    "title": "Is Memorization Actually Necessary for Generalization?",
+    "authors": "Hadi Abdullah and Blaine Hoak and Ke Wang and Yizhen Wang and Sunpreet Arora and Yiwei Cai",
+    "venue": "Under review",
+    "year": 2024,
+    "group": "submission",
+    "lab": false,
+    "links": [
+      { "label": "Paper", "url": "https://openreview.net/forum?id=lf8QQ2KMgv" }
+    ]
+  }
+]

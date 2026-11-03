@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iris-research-lab.github.io/schemas/news.schema.json",
+  "title": "IRIS Lab news",
+  "description": "News items. Order does not matter; the site sorts newest first.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["date", "text"],
+    "properties": {
+      "date": { "description": "YYYY-MM-DD", "type": "string", "format": "date", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+      "text": { "description": "One or two sentences. Simple HTML links (<a href=\"...\">) are allowed.", "type": "string", "minLength": 1 }
+    }
+  }
+}

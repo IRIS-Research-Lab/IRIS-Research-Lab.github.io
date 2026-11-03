@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iris-research-lab.github.io/schemas/research.schema.json",
+  "title": "IRIS Lab research themes",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["id", "title", "summary"],
+    "properties": {
+      "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+      "title": { "type": "string", "minLength": 1 },
+      "icon": { "description": "Font Awesome classes, e.g. 'fa-solid fa-eye'", "type": "string" },
+      "summary": { "type": "string", "minLength": 1 }
+    }
+  }
+}

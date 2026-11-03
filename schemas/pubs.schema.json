@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iris-research-lab.github.io/schemas/pubs.schema.json",
+  "title": "IRIS Lab publications",
+  "description": "List of publications. Shared with hoak.me, so keep keys stable once published.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["key", "title", "authors", "venue", "year", "group", "lab"],
+    "properties": {
+      "key": {
+        "description": "Unique, stable identifier, e.g. lastname_keyword_year. Never change it once merged.",
+        "type": "string",
+        "pattern": "^[a-z0-9_]+$"
+      },
+      "title": { "type": "string", "minLength": 1 },
+      "authors": {
+        "description": "Author list joined with ' and ', e.g. 'Ada Lovelace and Blaine Hoak'. Mark equal contribution with '*'.",
+        "type": "string",
+        "minLength": 1
+      },
+      "venue": { "description": "Full venue name with abbreviation, e.g. 'USENIX Security Symposium'.", "type": "string", "minLength": 1 },
+      "year": { "type": "integer", "minimum": 2000, "maximum": 2100 },
+      "group": {
+        "description": "Publication type. 'submission' entries are never shown on the lab site.",
+        "enum": ["conference", "journal", "workshop", "techreport", "thesis", "submission"]
+      },
+      "lab": { "description": "true for work done in the IRIS Lab; false hides it on the lab site.", "type": "boolean" },
+      "image": {
+        "description": "Absolute URL of a teaser image, normally https://iris-research-lab.github.io/assets/images/publications/<file>.",
+        "type": "string",
+        "pattern": "^https://"
+      },
+      "links": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["label", "url"],
+          "properties": {
+            "label": { "description": "e.g. Paper, Code, Dataset, Poster, Slides, Talk, Blog", "type": "string", "minLength": 1 },
+            "url": { "type": "string", "pattern": "^https?://" }
+          }
+        }
+      },
+      "authornote": { "description": "e.g. '* indicates equal contribution'", "type": "string" },
+      "award": { "description": "e.g. 'Best Paper Award'", "type": "string" },
+      "talkbadge": { "description": "e.g. 'Selected for Oral Presentation'", "type": "string" }
+    }
+  }
+}
