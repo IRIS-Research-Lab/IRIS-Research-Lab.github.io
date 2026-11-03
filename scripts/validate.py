@@ -6,6 +6,7 @@
 
 The same check runs on every pull request (.github/workflows/validate.yml).
 """
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -14,6 +15,10 @@ from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parent.parent
 SITE = "https://iris-research-lab.github.io/"
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--data-dir", type=Path, default=ROOT / "_site" / "data",
+                    help="Directory containing the four content files (default: _site/data)")
+DATA = parser.parse_args().data_dir
 
 # data file -> (schema file, field that must be unique)
 FILES = {
@@ -44,7 +49,10 @@ def check_local_image(file, i, field, url):
 
 for name, (schema_name, unique) in FILES.items():
     try:
-        data = json.loads((ROOT / "data" / name).read_text(encoding="utf-8"))
+        data = json.loads((DATA / name).read_text(encoding="utf-8"))
+    except OSError as e:
+        err(name, f"cannot read {DATA / name}: {e}. Run scripts/build.py first.")
+        continue
     except json.JSONDecodeError as e:
         err(name, f"invalid JSON at line {e.lineno}, column {e.colno}: {e.msg}")
         continue

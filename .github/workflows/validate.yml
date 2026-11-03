@@ -20,4 +20,6 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install "jsonschema[format]>=4.18"
-      - run: python scripts/validate.py
+      # Public snapshot only: PR code must never receive the private source token.
+      - run: python scripts/build.py --published
+      - run: python -m unittest discover -s tests

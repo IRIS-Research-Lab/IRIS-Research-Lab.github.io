@@ -1,32 +1,37 @@
 # Contributing to the IRIS Lab website
 
-Almost everything on the site comes from the JSON files in [`data/`](data/). You should only ever need to
-edit those files (and add images). Please don't edit the HTML/JS unless we've talked about it.
+Almost everything on the site comes from the JSON files in the private
+[IRIS-Updates repository](https://github.com/IRIS-Research-Lab/IRIS-Updates/tree/main/data).
+Edit content there and add images here. The website generates its public `/data/` files at build time;
+do not add content copies to this repository. Please don't edit the HTML/JS unless we've talked about it.
 
 | To change...          | Edit                                   | Images go in                       |
 |-----------------------|----------------------------------------|------------------------------------|
-| Publications          | [`data/pubs.json`](data/pubs.json)     | `assets/images/publications/`      |
-| People                | [`data/people.json`](data/people.json) | `assets/images/people/`            |
-| News on the home page | [`data/news.json`](data/news.json)     | —                                  |
-| Research themes       | [`data/research.json`](data/research.json) | —                              |
+| Publications          | [`data/pubs.json`](https://github.com/IRIS-Research-Lab/IRIS-Updates/blob/main/data/pubs.json)     | `assets/images/publications/`      |
+| People                | [`data/people.json`](https://github.com/IRIS-Research-Lab/IRIS-Updates/blob/main/data/people.json) | `assets/images/people/`            |
+| News on the home page | [`data/news.json`](https://github.com/IRIS-Research-Lab/IRIS-Updates/blob/main/data/news.json)     | —                                  |
+| Research themes       | [`data/research.json`](https://github.com/IRIS-Research-Lab/IRIS-Updates/blob/main/data/research.json) | —                              |
 
 > ⚠️ `data/pubs.json` and `data/people.json` are also loaded by Prof. Hoak's personal site (hoak.me).
 > **Never rename or delete a publication `key` or person `id`** once it has been merged, and don't move or
-> rename the files in `data/`.
+> rename the files in `IRIS-Updates/data/`. The public website URLs remain unchanged.
 
 ## Workflow
 
-1. Create a branch: `git checkout -b add-<something>` (or use GitHub's web editor, which does this for you).
+1. In **IRIS-Updates**, create a branch: `git checkout -b add-<something>` (or use GitHub's web editor, which does this for you).
 2. Make your edit. Mind the commas: every item in a list is separated by `,` except the last one.
-3. Check it locally (optional but quick):
+3. Check it locally from your **website checkout** (with IRIS-Updates alongside it):
    ```sh
    pip install "jsonschema[format]"
-   python scripts/validate.py
+   python scripts/build.py --data-dir ../IRIS-Updates/data
    ```
-4. Preview locally (optional): `python3 -m http.server 8000` from the repo root, then open
+4. Preview locally (optional): `python3 -m http.server 8000 --directory _site` from the website repo root, then open
    <http://localhost:8000>.
-5. Open a pull request. The **validate** check must pass and Prof. Hoak (or another lab member) must approve
-   before it can be merged. If the check fails, click **Details** to see exactly which line is wrong.
+5. Open a pull request in **IRIS-Updates**. Prof. Hoak (or another lab member) should review it before
+   merge. The source merge requests a website build; its validation must pass before publication. If
+   it fails, inspect the website Actions log and fix the source. For a new image, merge the image into
+   this website repository first, then reference its absolute URL in the source PR. Website code PRs
+   retain the **validate** check, which builds against the current public snapshot without private credentials.
 
 ## Add a paper
 
