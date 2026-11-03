@@ -2,12 +2,12 @@
 
 Almost everything on the site comes from the JSON files in the private
 [IRIS-Updates repository](https://github.com/IRIS-Research-Lab/IRIS-Updates/tree/main/data).
-Edit content there and add images here. The website generates its public `/data/` files at build time;
+Edit content and add new publication figures there; legacy website images remain here. The website generates its public `/data/` files at build time;
 do not add content copies to this repository. Please don't edit the HTML/JS unless we've talked about it.
 
 | To change...          | Edit                                   | Images go in                       |
 |-----------------------|----------------------------------------|------------------------------------|
-| Publications          | [`data/pubs.json`](https://github.com/IRIS-Research-Lab/IRIS-Updates/blob/main/data/pubs.json)     | `assets/images/publications/`      |
+| Publications          | [`data/pubs.json`](https://github.com/IRIS-Research-Lab/IRIS-Updates/blob/main/data/pubs.json)     | IRIS-Updates `assets/images/publications/` |
 | People                | [`data/people.json`](https://github.com/IRIS-Research-Lab/IRIS-Updates/blob/main/data/people.json) | `assets/images/people/`            |
 | News on the home page | [`data/news.json`](https://github.com/IRIS-Research-Lab/IRIS-Updates/blob/main/data/news.json)     | —                                  |
 | Research themes       | [`data/research.json`](https://github.com/IRIS-Research-Lab/IRIS-Updates/blob/main/data/research.json) | —                              |
@@ -29,8 +29,8 @@ do not add content copies to this repository. Please don't edit the HTML/JS unle
    <http://localhost:8000>.
 5. Open a pull request in **IRIS-Updates**. Prof. Hoak (or another lab member) should review it before
    merge. The source merge requests a website build; its validation must pass before publication. If
-   it fails, inspect the website Actions log and fix the source. For a new image, merge the image into
-   this website repository first, then reference its absolute URL in the source PR. Website code PRs
+   it fails, inspect the website Actions log and fix the source. For a new publication image, commit it under `assets/images/publications/` in the same source PR,
+   then reference its absolute public site URL. Avoid legacy website asset names. Website code PRs
    retain the **validate** check, which builds against the current public snapshot without private credentials.
 
 ## Add a paper
@@ -60,8 +60,12 @@ Add an object to `data/pubs.json` (order in the file doesn't matter; the site so
 - **`group`**: `conference`, `journal`, `workshop`, `techreport`, `thesis`, or `submission`.
   Papers under review use `submission` and are **not shown** on the site; switch it once accepted.
 - **`lab`**: `true` for work done in the IRIS Lab.
-- **`image`** (optional): a teaser figure, about 1200px wide, under 1–2 MB. Commit the file to
-  `assets/images/publications/` and use the full `https://iris-research-lab.github.io/...` URL.
+- **`research_example`** (optional boolean): `true` includes selected prior work on Research without changing
+  `lab` affiliation. Submissions remain hidden. Omitted or `false` preserves the legacy lab-only filter.
+- **`highlight`** (optional boolean): personal-site highlight selection, retained for hoak.me compatibility;
+  it does not select papers for IRIS Research.
+- **`image`** (optional): a teaser figure, about 1200px wide, under 2 MiB (PNG/JPEG/WebP/GIF). Commit the file to
+  IRIS-Updates `assets/images/publications/` and use the full `https://iris-research-lab.github.io/...` URL.
 - **`links`** (optional): common labels get icons automatically: Paper, Code, Dataset, Poster, Slides,
   Talk, Blog. Put posters/slides PDFs in a public place (e.g. the arXiv page or a repo) and link them.
 - Optional extras: `"award": "Best Paper Award"`, `"talkbadge": "Selected for Oral Presentation"`.

@@ -3,7 +3,7 @@
 import argparse
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import re
 import shutil
 import subprocess
@@ -16,17 +16,22 @@ ROOT = Path(__file__).resolve().parent.parent
 REPO = "https://api.github.com/repos/IRIS-Research-Lab/IRIS-Updates"
 PUBLISHED = "https://iris-research-lab.github.io/data"
 FILES = ("news.json", "people.json", "pubs.json", "research.json")
+MEDIA_PREFIX = "assets/images/publications/"
+MAX_MEDIA_BYTES = 2 * 1024 * 1024
 STATIC_DIRS = ("assets", "partials", "people", "publications", "research", "join", "schemas")
 
 
-def download(url, token=None, raw=False):
+def download(url, token=None, raw=False, max_bytes=None):
     headers = {"Accept": "application/vnd.github.raw+json" if raw else "application/vnd.github+json",
                "User-Agent": "iris-lab-site-build"}
     if token:
         headers["Authorization"] = f"Bearer {token}"
     try:
         with urlopen(Request(url, headers=headers), timeout=30) as response:
-            return response.read()
+            content = response.read(max_bytes + 1) if max_bytes else response.read()
+            if max_bytes and len(content) > max_bytes:
+                raise RuntimeError(f"Download exceeds {max_bytes} bytes: {url}")
+            return content
     except HTTPError as e:
         raise RuntimeError(f"Cannot fetch {url} (HTTP {e.code}). Check source access and IRIS_UPDATES_TOKEN.") from None
     except (URLError, TimeoutError) as e:
@@ -48,7 +53,7 @@ def prepare_data(destination, local=None, published=False):
         if not token:
             raise RuntimeError("IRIS_UPDATES_TOKEN is required to read private IRIS-Updates. "
                                "Set a read-only Contents token, or use --data-dir ../IRIS-Updates/data locally.")
-        # Resolve main once so all four files come from the same commit.
+        # Resolve main once so all JSON and media come from the same commit.
         sha = json.loads(download(f"{REPO}/commits/main", token))["sha"]
         if not re.fullmatch(r"[0-9a-f]{40}", sha):
             raise RuntimeError("IRIS-Updates returned an invalid commit SHA")
@@ -57,6 +62,70 @@ def prepare_data(destination, local=None, published=False):
     for name in FILES:
         url = f"{base}/{name}" if published else f"{base}/{name}?ref={sha}"
         (destination / name).write_bytes(download(url, token, raw=not published))
+    return None if published else (sha, token)
+
+
+def media_path(path):
+    """Only publish regular raster publication figures from the source repo."""
+    pure = PurePosixPath(path)
+    if (pure.is_absolute() or '..' in pure.parts or str(pure) != path
+            or not re.fullmatch(r'[a-zA-Z0-9_./-]+', path)
+            or not path.startswith(MEDIA_PREFIX)
+            or pure.suffix.lower() not in {'.png', '.jpg', '.jpeg', '.webp', '.gif'}):
+        raise RuntimeError(f"Unsafe publication media path: {path}")
+    return pure
+
+
+def write_media(staging, path, content):
+    media_path(path)
+    if len(content) > MAX_MEDIA_BYTES:
+        raise RuntimeError(f"Publication media exceeds 2 MiB: {path}")
+    target = staging / path
+    if target.exists():
+        raise RuntimeError(f"Source media collides with website asset: {path}")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(content)
+
+
+def prepare_media(staging, local=None, published=False, revision=None):
+    if local:
+        source = local.resolve().parent / MEDIA_PREFIX
+        for directory in (source, source.parent, source.parent.parent):
+            if directory.is_symlink():
+                raise RuntimeError(f"Symlink media directory: {directory}")
+        if source.exists():
+            for path in sorted(source.rglob('*')):
+                if path.is_symlink():
+                    raise RuntimeError(f"Symlink publication media: {path}")
+                if path.is_file():
+                    write_media(staging, MEDIA_PREFIX + path.relative_to(source).as_posix(), path.read_bytes())
+        return
+    if published:
+        # PRs fetch only referenced public figures on our own origin, never hoak.me.
+        pubs = json.loads((staging / 'data/pubs.json').read_text())
+        origin = PUBLISHED.removesuffix('/data') + '/'
+        paths = {p['image'][len(origin):] for p in pubs
+                 if p.get('image', '').startswith(origin)}
+        for path in sorted(paths):
+            media_path(path)
+            if not (staging / path).is_file():
+                write_media(staging, path, download(origin + path, max_bytes=MAX_MEDIA_BYTES))
+        return
+    sha, token = revision
+    tree = json.loads(download(f"{REPO}/git/trees/{sha}?recursive=1", token))
+    if tree.get('truncated'):
+        raise RuntimeError('IRIS-Updates media tree was truncated')
+    for entry in tree['tree']:
+        path = entry['path']
+        if not path.startswith(MEDIA_PREFIX) or entry['type'] == 'tree':
+            continue
+        media_path(path)
+        if entry.get('mode') != '100644' or entry['type'] != 'blob':
+            raise RuntimeError(f"Unsupported publication media entry: {path}")
+        if entry.get('size', MAX_MEDIA_BYTES + 1) > MAX_MEDIA_BYTES:
+            raise RuntimeError(f"Publication media exceeds 2 MiB: {path}")
+        content = download(f"{REPO}/contents/{path}?ref={sha}", token, raw=True, max_bytes=MAX_MEDIA_BYTES)
+        write_media(staging, path, content)
 
 
 def build(local=None, published=False):
@@ -65,10 +134,12 @@ def build(local=None, published=False):
         staging = Path(temporary) / "site"
         data = staging / "data"
         data.mkdir(parents=True)
-        prepare_data(data, local, published)
-        subprocess.run([sys.executable, str(ROOT / "scripts/validate.py"), "--data-dir", str(data)], check=True)
+        revision = prepare_data(data, local, published)
         for name in STATIC_DIRS:
             shutil.copytree(ROOT / name, staging / name)
+        prepare_media(staging, local, published, revision)
+        subprocess.run([sys.executable, str(ROOT / "scripts/validate.py"), "--data-dir", str(data),
+                        "--asset-root", str(staging)], check=True)
         for page in ROOT.glob("*.html"):
             shutil.copyfile(page, staging / page.name)
         shutil.copyfile(ROOT / ".nojekyll", staging / ".nojekyll")

@@ -26,7 +26,9 @@
         "description": "Publication type. 'submission' entries are never shown on the lab site.",
         "enum": ["conference", "journal", "workshop", "techreport", "thesis", "submission"]
       },
-      "lab": { "description": "true for work done in the IRIS Lab; false hides it on the lab site.", "type": "boolean" },
+      "lab": { "description": "true for work done in the IRIS Lab. Prior work may be included separately as a research_example.", "type": "boolean" },
+      "research_example": { "description": "Opt prior work into Research as example content without changing lab affiliation. Submissions remain hidden.", "type": "boolean" },
+      "highlight": { "description": "Optional personal-site highlight selection, retained for hoak.me compatibility. Does not control IRIS Research visibility.", "type": "boolean" },
       "image": {
         "description": "Absolute URL of a teaser image, normally https://iris-research-lab.github.io/assets/images/publications/<file>.",
         "type": "string",

@@ -26,7 +26,10 @@ _site/data/          generated content from IRIS-Updates; never edit or commit
 `IRIS-Updates/data/{news,people,pubs,research}.json` is the single source of truth. It is private, so
 browsers cannot fetch it directly. The Pages workflow fetches the four files using `IRIS_UPDATES_TOKEN`,
 resolving `main` to one commit first, validates them, and copies their exact bytes into `_site/data/`.
-Only static pages, assets, partials, schemas, `.nojekyll`, and these four JSON files are published.
+Only static pages, assets, partials, schemas, `.nojekyll`, these four JSON files, and allowed
+IRIS-Updates raster figures under `assets/images/publications/` are published. JSON and media
+use the same resolved source commit. Media is staged before validation; unsafe paths, symlinks,
+collisions with legacy assets, and files over 2 MiB fail the build.
 
 The existing page scripts still load `/data/*.json`. Existing consumers such as hoak.me keep using
 `https://iris-research-lab.github.io/data/pubs.json` and `people.json`; URLs, CORS behavior on Pages,
@@ -73,3 +76,30 @@ and run `python3 scripts/build.py`. Never put the token in a file committed to e
 No visibility change is needed. The four content files remain public in the built site. No secrets,
 Pages settings, or deployments are changed while preparing these PRs. If the initial source refresh
 fails before this workflow exists on main, the website merge supplies the first build automatically.
+
+## Research publications
+
+`/research/` is the canonical publications page. `/publications/` redirects there, preserving
+query strings and paper hashes when JavaScript is enabled, with a meta refresh and visible fallback link.
+Research includes non-submission records with `lab: true` or the optional `research_example: true`.
+The latter selects example prior work without changing affiliation; absent/false preserves the old filter.
+The 2026-11-03 hoak.me import is one-time static source content. No import runs during builds or in browsers.
+The site reads JSON and figures from IRIS-Updates; hoak.me URLs are outbound publication links only.
+
+Theme summaries remain in compact disclosures below the papers, preserving Home's existing theme anchors.
+Navigation is Home / Lab / Research / Join Us. The Lab label still targets the existing `/people/` page;
+the route migration and other page changes are deferred to the later Lab chunk.
+
+For a branch preview, use the data worktree checked out at the proposed source branch (the original
+`/home/charles/code/IRIS-Updates` checkout is unborn and is not usable input):
+
+```sh
+python3 scripts/build.py --data-dir /absolute/path/to/updates-worktree/data
+python3 scripts/validate.py --data-dir _site/data --asset-root _site
+python3 -m unittest discover -s tests
+```
+
+Local builds copy publication media from the adjacent source root automatically. Production resolves
+source main once, then fetches JSON and media at that SHA. Credential-free `--published` checks fetch
+missing referenced images only from the public IRIS site, never from hoak.me. Deploy the accepting
+website schema before merging content with new fields; coordinate both PRs and prerequisite website PR #1.

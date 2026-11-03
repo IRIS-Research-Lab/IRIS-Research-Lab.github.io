@@ -18,7 +18,11 @@ SITE = "https://iris-research-lab.github.io/"
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--data-dir", type=Path, default=ROOT / "_site" / "data",
                     help="Directory containing the four content files (default: _site/data)")
-DATA = parser.parse_args().data_dir
+parser.add_argument("--asset-root", type=Path, default=None,
+                    help="Public asset root (default: _site for generated data, checkout otherwise)")
+args = parser.parse_args()
+DATA = args.data_dir
+ASSETS = args.asset_root or (DATA.parent if DATA.resolve() == (ROOT / "_site/data").resolve() else ROOT)
 
 # data file -> (schema file, field that must be unique)
 FILES = {
@@ -40,11 +44,11 @@ def where(path):
 
 
 def check_local_image(file, i, field, url):
-    """Images hosted on this site must exist in the repo."""
+    """Images hosted on this site must exist in the selected public asset root."""
     if url and url.startswith(SITE):
-        local = ROOT / url[len(SITE):]
+        local = ASSETS / url[len(SITE):]
         if not local.is_file():
-            err(file, f"[{i}].{field}: {url} points to {local.relative_to(ROOT)}, which does not exist")
+            err(file, f"[{i}].{field}: {url} points to {local.relative_to(ASSETS)}, which does not exist")
 
 
 for name, (schema_name, unique) in FILES.items():
