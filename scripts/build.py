@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Build _site with validated content from the private IRIS-Updates repository."""
 import argparse
+import base64
+import binascii
 import json
 import os
 from pathlib import Path, PurePosixPath
@@ -124,7 +126,16 @@ def prepare_media(staging, local=None, published=False, revision=None):
             raise RuntimeError(f"Unsupported publication media entry: {path}")
         if entry.get('size', MAX_MEDIA_BYTES + 1) > MAX_MEDIA_BYTES:
             raise RuntimeError(f"Publication media exceeds 2 MiB: {path}")
-        content = download(f"{REPO}/contents/{path}?ref={sha}", token, raw=True, max_bytes=MAX_MEDIA_BYTES)
+        blob_sha = entry['sha']
+        if not re.fullmatch(r'[0-9a-f]{40}', blob_sha):
+            raise RuntimeError(f"Invalid publication blob SHA: {path}")
+        blob = json.loads(download(f"{REPO}/git/blobs/{blob_sha}", token, max_bytes=MAX_MEDIA_BYTES * 2))
+        if blob.get('encoding') != 'base64':
+            raise RuntimeError(f"Unsupported publication blob encoding: {path}")
+        try:
+            content = base64.b64decode(''.join(blob['content'].split()), validate=True)
+        except binascii.Error:
+            raise RuntimeError(f"Invalid publication blob content: {path}") from None
         write_media(staging, path, content)
 
 

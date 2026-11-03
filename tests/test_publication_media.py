@@ -1,4 +1,5 @@
 """Publication import contracts and the source-media artifact boundary."""
+import base64
 import io
 import json
 from pathlib import Path
@@ -15,8 +16,8 @@ class MediaTests(unittest.TestCase):
     def test_private_json_and_media_share_resolved_revision(self):
         sha = 'b' * 40
         path = build.MEDIA_PREFIX + 'hoak/figure.webp'
-        tree = {'tree': [{'path': path, 'type': 'blob', 'mode': '100644', 'size': 6}]}
-        responses = [json.dumps({'sha': sha}).encode()] + [b'[]'] * 4 + [json.dumps(tree).encode(), b'figure']
+        tree = {'tree': [{'path': path, 'type': 'blob', 'mode': '100644', 'size': 6, 'sha': 'c' * 40}]}
+        responses = [json.dumps({'sha': sha}).encode()] + [b'[]'] * 4 + [json.dumps(tree).encode(), json.dumps({'encoding': 'base64', 'content': base64.b64encode(b'figure').decode()}).encode()]
         with tempfile.TemporaryDirectory() as tmp, patch.dict('os.environ', {'IRIS_UPDATES_TOKEN': 'test-only'}):
             stage = Path(tmp)
             data = stage / 'data'
@@ -27,7 +28,8 @@ class MediaTests(unittest.TestCase):
             self.assertEqual((stage / path).read_bytes(), b'figure')
             urls = [c.args[0] for c in fetch.call_args_list]
             self.assertIn(f'/git/trees/{sha}?recursive=1', urls[-2])
-            self.assertTrue(all(f'?ref={sha}' in u for u in urls[1:5] + urls[-1:]))
+            self.assertTrue(all(f'?ref={sha}' in u for u in urls[1:5]))
+            self.assertEqual(urls[-1], f"{build.REPO}/git/blobs/{'c' * 40}")
 
     def test_media_rejects_unsafe_paths_collisions_and_oversized_files(self):
         with tempfile.TemporaryDirectory() as tmp:
