@@ -349,6 +349,52 @@ a.iris-card:hover, .iris-card.hoverable:hover {
 .member-strip a:hover { color: var(--iris-orange); }
 
 /* ==========================================
+   Lab photos and videos
+========================================== */
+.lab-photos { margin-top: 0.5rem; scroll-margin-top: 5.5rem; }
+
+.lab-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.lab-media-card {
+  margin: 0;
+  min-width: 0;
+  max-width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.lab-media-card picture { display: block; }
+
+.lab-media-visual {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  background: var(--iris-green-dark);
+}
+
+.lab-media-caption {
+  padding: 0.75rem 1rem 0.9rem;
+  font-size: 0.9rem;
+  color: var(--color-muted);
+}
+
+.lab-media-caption time {
+  font-weight: 600;
+  color: var(--iris-green);
+}
+
+.lab-media-dot { margin: 0 0.4rem; }
+
+/* ==========================================
    Publications
 ========================================== */
 .year-heading {

@@ -5,8 +5,10 @@ Department of Computer Science, The University of Texas at Dallas.
 
 Live site: <https://iris-research-lab.github.io>
 
-Plain HTML + Bootstrap 5.3 + Font Awesome. Content is edited only in the private
+Plain HTML + Bootstrap 5.3 + Font Awesome. News, people, publications, and research
+themes are edited only in the private
 [IRIS-Updates repository](https://github.com/IRIS-Research-Lab/IRIS-Updates/tree/main/data).
+Lab photos and videos are the exception: they live in this repo.
 See [CONTRIBUTING.md](CONTRIBUTING.md) for fields and images.
 
 ## Layout
@@ -15,10 +17,12 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for fields and images.
 index.html, people/, research/, publications/, join/, 404.html   pages
 partials/            navbar and footer, injected by assets/js/layout.js
 assets/js/           one script per page + common.js helpers
+assets/media/lab/    optimized Lab photos and videos
+data/lab_media.json  gallery catalog (one object per item), copied into _site/data/
 schemas/             JSON Schemas for the shared content
 scripts/build.py     fetch, validate, and assemble _site/ for GitHub Pages
 scripts/validate.py  schema + uniqueness + local image checks
-_site/data/          generated content from IRIS-Updates; never edit or commit
+_site/data/          generated content; never edit or commit
 ```
 
 ## Shared data and deployment
@@ -26,10 +30,11 @@ _site/data/          generated content from IRIS-Updates; never edit or commit
 `IRIS-Updates/data/{news,people,pubs,research}.json` is the single source of truth. It is private, so
 browsers cannot fetch it directly. The Pages workflow fetches the four files using `IRIS_UPDATES_TOKEN`,
 resolving `main` to one commit first, validates them, and copies their exact bytes into `_site/data/`.
-Only static pages, assets, partials, schemas, `.nojekyll`, these four JSON files, and allowed
-IRIS-Updates raster figures under `assets/images/publications/` are published. JSON and media
-use the same resolved source commit. Media is staged before validation; unsafe paths, symlinks,
-collisions with legacy assets, and files over 2 MiB fail the build.
+The same build copies this repository's `data/lab_media.json` beside them.
+Only static pages, assets (including `assets/media/lab/`), partials, schemas, `.nojekyll`, these four JSON files,
+`lab_media.json`, and allowed IRIS-Updates raster figures under `assets/images/publications/` are published.
+JSON and publication media use the same resolved source commit. Media is staged before validation; unsafe paths, symlinks,
+collisions with legacy assets, and publication files over 2 MiB fail the build. Lab photos over 2 MiB and lab videos over 10 MiB fail too.
 
 The existing page scripts still load `/data/*.json`. Existing consumers such as hoak.me keep using
 `https://iris-research-lab.github.io/data/pubs.json` and `people.json`; URLs, CORS behavior on Pages,
@@ -89,8 +94,8 @@ The 2026-11-03 hoak.me import is one-time static source content. No import runs 
 The site reads JSON and figures from IRIS-Updates; hoak.me URLs are outbound publication links only.
 
 Theme summaries remain in compact disclosures below the papers, preserving Home's existing theme anchors.
-Navigation is Home / Lab / Research / Join Us. The Lab label still targets the existing `/people/` page;
-the route migration and other page changes are deferred to the later Lab chunk.
+Navigation is Home / Lab / Research / Join Us. The Lab label still targets the existing `/people/` page,
+which now includes Photos & fun from `data/lab_media.json`. Moving that page off `/people/` is still deferred.
 
 For a branch preview, use the data worktree checked out at the proposed source branch (the original
 `/home/charles/code/IRIS-Updates` checkout is unborn and is not usable input):

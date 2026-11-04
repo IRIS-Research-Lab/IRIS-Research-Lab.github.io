@@ -1,9 +1,10 @@
 # Contributing to the IRIS Lab website
 
-Almost everything on the site comes from the JSON files in the private
+News, people, publications, and research themes come from the JSON files in the private
 [IRIS-Updates repository](https://github.com/IRIS-Research-Lab/IRIS-Updates/tree/main/data).
-Edit content and add new publication figures there; legacy website images remain here. The website generates its public `/data/` files at build time;
-do not add content copies to this repository. Please don't edit the HTML/JS unless we've talked about it.
+Edit that content and add new publication figures there; legacy website images remain here. The website generates those public `/data/` files at build time;
+do not copy them into this repository. Lab photos and videos are the exception, listed below.
+Please don't edit the HTML/JS unless we've talked about it.
 
 | To change...          | Edit                                   | Images go in                       |
 |-----------------------|----------------------------------------|------------------------------------|
@@ -11,6 +12,7 @@ do not add content copies to this repository. Please don't edit the HTML/JS unle
 | People                | [`data/people.json`](https://github.com/IRIS-Research-Lab/IRIS-Updates/blob/main/data/people.json) | `assets/images/people/`            |
 | News on the home page | [`data/news.json`](https://github.com/IRIS-Research-Lab/IRIS-Updates/blob/main/data/news.json)     | —                                  |
 | Research themes       | [`data/research.json`](https://github.com/IRIS-Research-Lab/IRIS-Updates/blob/main/data/research.json) | —                              |
+| Lab photos and videos | [`data/lab_media.json`](data/lab_media.json) in **this** repo | `assets/media/lab/YYYY-MM-DD/` |
 
 > ⚠️ `data/pubs.json` and `data/people.json` are also loaded by Prof. Hoak's personal site (hoak.me).
 > **Never rename or delete a publication `key` or person `id`** once it has been merged, and don't move or
@@ -118,6 +120,75 @@ Add an object to `data/news.json` (newest items appear first automatically):
 - **`date`**: `YYYY-MM-DD`.
 - **`text`**: one or two sentences. Links are allowed as `<a href=\"...\">...</a>` (note the `\"` escapes
   inside JSON). Write `&amp;` for a literal `&`.
+
+## Add a lab photo or video
+
+Photos & fun is the gallery on the Lab page (`/people/`). It reads [`data/lab_media.json`](data/lab_media.json).
+Adding an item is one object in that array. The page sorts newest `date` first, lazy-loads images, and leaves the section out when the array is empty.
+
+There is no video in the gallery yet. A `type` of `video` is already rendered as `<video controls muted playsinline>` with its poster. Follow the video steps below when you have a clip.
+
+Keep optimized photos under 2 MB and videos under 10 MB so the repo does not need Git LFS. The build rejects larger lab files. Do not commit camera originals; they carry GPS and other EXIF.
+
+### Photo
+
+The optimizer reads the original and writes a WebP plus a high-quality JPEG fallback, at most 1600px wide, with EXIF, GPS, and XMP removed. It does not modify the original.
+
+```sh
+pip install pillow
+python3 scripts/optimize_lab_media.py original.jpg assets/media/lab/2026-12-01/lunch
+```
+
+Paste the printed object into `data/lab_media.json`, replace `alt` with what a screen reader should hear, and add `caption` only if you want a visible line:
+
+```json
+{
+  "id": "2026-12-01-lunch",
+  "type": "image",
+  "date": "2026-12-01",
+  "src": "https://iris-research-lab.github.io/assets/media/lab/2026-12-01/lunch.webp",
+  "fallback": "https://iris-research-lab.github.io/assets/media/lab/2026-12-01/lunch.jpg",
+  "width": 1600,
+  "height": 1200,
+  "alt": "Lab members at a table with lunch boxes.",
+  "caption": "Friday lunch"
+}
+```
+
+`src` is the WebP. `fallback` is the JPEG (or PNG) used when a browser has no WebP. `caption` may be omitted.
+
+### Video
+
+Transcode to H.264 MP4 with the moov atom at the front (`+faststart`), a reasonable bitrate, and a file under about 10 MB. Strip metadata so a phone clip does not keep its GPS. Then make a poster with the photo optimizer (that step also strips the poster's metadata).
+
+```sh
+ffmpeg -y -i original.mov \
+  -map_metadata -1 \
+  -vf "scale='min(1280,iw)':-2" \
+  -c:v libx264 -profile:v high -pix_fmt yuv420p \
+  -crf 28 -preset slow -movflags +faststart \
+  assets/media/lab/2026-12-01/clip.mp4
+ffmpeg -y -ss 00:00:01 -i original.mov -map_metadata -1 -frames:v 1 /tmp/clip-poster.jpg
+python3 scripts/optimize_lab_media.py /tmp/clip-poster.jpg assets/media/lab/2026-12-01/clip-poster
+```
+
+The command above keeps the audio track. The page starts the clip muted, and the controls can unmute it. Add `-an` before the output path when there is no audio worth keeping. If the MP4 cannot stay under 10 MB without falling apart, say so in the pull request instead of committing the camera original.
+
+```json
+{
+  "id": "2026-12-01-clip",
+  "type": "video",
+  "date": "2026-12-01",
+  "src": "https://iris-research-lab.github.io/assets/media/lab/2026-12-01/clip.mp4",
+  "poster": "https://iris-research-lab.github.io/assets/media/lab/2026-12-01/clip-poster.jpg",
+  "width": 1280,
+  "height": 720,
+  "alt": "A short pan across the lab bench.",
+  "caption": "Bench tour"
+}
+```
+
+`poster` is required for a video. The page shows controls and does not autoplay.
 
 ## Common validation errors
 

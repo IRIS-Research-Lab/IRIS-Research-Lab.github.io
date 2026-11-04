@@ -18,6 +18,8 @@ ROOT = Path(__file__).resolve().parent.parent
 REPO = "https://api.github.com/repos/IRIS-Research-Lab/IRIS-Updates"
 PUBLISHED = "https://iris-research-lab.github.io/data"
 FILES = ("news.json", "people.json", "pubs.json", "research.json")
+# Website-owned gallery catalog. Photos and videos are not fetched from IRIS-Updates.
+LAB_MEDIA = "lab_media.json"
 MEDIA_PREFIX = "assets/images/publications/"
 MAX_MEDIA_BYTES = 2 * 1024 * 1024
 STATIC_DIRS = ("assets", "partials", "people", "publications", "research", "join", "schemas")
@@ -139,6 +141,19 @@ def prepare_media(staging, local=None, published=False, revision=None):
         write_media(staging, path, content)
 
 
+def publish_lab_media(destination):
+    """Copy this repo's gallery catalog into the staged /data directory."""
+    source = ROOT / "data" / LAB_MEDIA
+    if not source.is_file():
+        raise RuntimeError(
+            f"Missing {source}. List lab photos and videos in data/{LAB_MEDIA} in this repository."
+        )
+    target = destination / LAB_MEDIA
+    if target.exists():
+        raise RuntimeError(f"Refusing to overwrite content-source {LAB_MEDIA}")
+    shutil.copyfile(source, target)
+
+
 def build(local=None, published=False):
     # Stage and validate everything before replacing any prior local build.
     with tempfile.TemporaryDirectory(prefix="iris-site-") as temporary:
@@ -146,6 +161,7 @@ def build(local=None, published=False):
         data = staging / "data"
         data.mkdir(parents=True)
         revision = prepare_data(data, local, published)
+        publish_lab_media(data)
         for name in STATIC_DIRS:
             shutil.copytree(ROOT / name, staging / name)
         prepare_media(staging, local, published, revision)

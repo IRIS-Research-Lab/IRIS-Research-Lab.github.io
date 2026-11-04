@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iris-research-lab.github.io/schemas/lab_media.schema.json",
+  "title": "IRIS Lab photos and videos",
+  "description": "Gallery items for Photos & fun on the Lab page. Order does not matter; the page sorts newest first. One object is one item.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["id", "type", "src", "alt"],
+    "properties": {
+      "id": {
+        "description": "Unique id, lowercase, usually dated-folder plus a short slug.",
+        "type": "string",
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+      },
+      "type": {
+        "description": "image uses src (WebP) and fallback (JPEG or PNG). video uses an H.264 MP4 in src plus a poster.",
+        "enum": ["image", "video"]
+      },
+      "date": {
+        "description": "YYYY-MM-DD. Shown on the card. Newest dates are listed first.",
+        "type": "string",
+        "format": "date",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+      },
+      "src": {
+        "description": "Absolute URL of the WebP (image) or H.264 MP4 (video) under assets/media/lab/.",
+        "type": "string",
+        "pattern": "^https://"
+      },
+      "fallback": {
+        "description": "Absolute URL of the JPEG or PNG shown when the browser has no WebP.",
+        "type": "string",
+        "pattern": "^https://"
+      },
+      "poster": {
+        "description": "Absolute URL of the video poster frame. Required for video.",
+        "type": "string",
+        "pattern": "^https://"
+      },
+      "width": { "description": "Pixel width of the optimized file, at most 1600.", "type": "integer", "minimum": 1, "maximum": 1600 },
+      "height": { "description": "Pixel height of the optimized file.", "type": "integer", "minimum": 1 },
+      "alt": { "description": "What a screen reader should say. Required for images and videos.", "type": "string", "minLength": 1 },
+      "caption": { "description": "Optional visible caption. Omit it, or use an empty string, for none.", "type": "string" }
+    },
+    "allOf": [
+      {
+        "if": {
+          "properties": { "type": { "const": "image" } },
+          "required": ["type"]
+        },
+        "then": {
+          "required": ["fallback"],
+          "properties": {
+            "src": { "pattern": "^https://iris-research-lab\\.github\\.io/assets/media/lab/.+\\.webp$" },
+            "fallback": { "pattern": "^https://iris-research-lab\\.github\\.io/assets/media/lab/.+\\.(jpe?g|png)$" }
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": { "type": { "const": "video" } },
+          "required": ["type"]
+        },
+        "then": {
+          "required": ["poster"],
+          "properties": {
+            "src": { "pattern": "^https://iris-research-lab\\.github\\.io/assets/media/lab/.+\\.mp4$" },
+            "poster": { "pattern": "^https://iris-research-lab\\.github\\.io/assets/media/lab/.+\\.(webp|jpe?g|png)$" }
+          }
+        }
+      }
+    ]
+  }
+}

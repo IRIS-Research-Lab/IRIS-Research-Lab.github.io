@@ -67,6 +67,9 @@ class ArtifactTests(unittest.TestCase):
         self.source.mkdir()
         for name in build.FILES:
             (self.source / name).write_bytes(b"[]\n")
+        lab_media = self.root / "data"
+        lab_media.mkdir()
+        (lab_media / "lab_media.json").write_bytes(b"[]\n")
         self.root_patch = patch.object(build, "ROOT", self.root)
         self.root_patch.start()
         self.addCleanup(self.root_patch.stop)
@@ -76,6 +79,7 @@ class ArtifactTests(unittest.TestCase):
         output = self.root / "_site"
         for name in build.FILES:
             self.assertEqual((output / "data" / name).read_bytes(), b"[]\n")
+        self.assertEqual((output / "data" / "lab_media.json").read_bytes(), b"[]\n")
         self.assertEqual((output / "index.html").read_text(), "<h1>IRIS</h1>")
         for name in (".git", ".env", "scripts", "tests", ".github"):
             self.assertFalse((output / name).exists())
