@@ -25,7 +25,7 @@ document.getElementById('members').innerHTML = people
   .filter(p => !p.alumni)
   .map(p => {
     const profile = `/people/#${esc(p.id)}`;
-    if (!p.website) {
+    if (!p.links?.website) {
       return `<a href="${profile}">${photoHTML(p, '')}<div>${esc(p.name)}</div></a>`;
     }
     // The photo link cannot sit inside the profile link.
