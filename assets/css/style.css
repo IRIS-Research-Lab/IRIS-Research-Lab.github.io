@@ -340,13 +340,41 @@ a.iris-card:hover, .iris-card.hoverable:hover {
 .person-links { display: flex; justify-content: center; gap: 0.9rem; margin-top: 1rem; }
 .person-links a { font-size: 1.15rem; }
 
+.person-photo-link {
+    display: inline-block;
+    max-width: 100%;
+    border-radius: 50%;
+    line-height: 0;
+}
+.person-photo-link:hover img,
+.person-photo-link:hover .person-photo,
+.person-photo-link:hover .person-photo-placeholder,
+.person-photo-link:focus-visible img,
+.person-photo-link:focus-visible .person-photo,
+.person-photo-link:focus-visible .person-photo-placeholder {
+    border-color: var(--iris-orange);
+}
+.person-photo-link:focus-visible {
+    outline: 3px solid var(--iris-orange);
+    outline-offset: 4px;
+}
+
 .member-strip { display: flex; flex-wrap: wrap; gap: 1.25rem; }
-.member-strip a { text-align: center; width: 110px; color: var(--color-text); font-size: 0.85rem; font-weight: 500; }
+.member-strip > a,
+.member-strip .member {
+    text-align: center;
+    width: 110px;
+    color: var(--color-text);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+.member-strip .member-name { display: block; color: inherit; }
 .member-strip img, .member-strip .person-photo-placeholder {
     width: 84px; height: 84px; border-radius: 50%; object-fit: cover;
     border: 3px solid var(--iris-green-soft); margin-bottom: 0.4rem; font-size: 1.6rem;
 }
-.member-strip a:hover { color: var(--iris-orange); }
+.member-strip > a:hover,
+.member-strip .member-name:hover { color: var(--iris-orange); }
 
 /* ==========================================
    Lab photos and videos

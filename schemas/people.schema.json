@@ -20,6 +20,11 @@
         "type": "string",
         "pattern": "^https://"
       },
+      "website": {
+        "description": "Personal site opened by clicking the photo. Omit it to leave the photo unlinked. The globe icon still uses links.website.",
+        "type": "string",
+        "pattern": "^https?://"
+      },
       "interests": { "type": "array", "items": { "type": "string", "minLength": 1 }, "maxItems": 5 },
       "links": {
         "type": "object",

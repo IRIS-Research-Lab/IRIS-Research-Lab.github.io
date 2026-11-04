@@ -35,10 +35,12 @@ export function initials(name) {
 }
 
 export function photoHTML(person, cls = 'person-photo') {
-  if (person.photo) {
-    return `<img class="${cls}" src="${esc(asset(person.photo))}" alt="${esc(person.name)}" loading="lazy">`;
-  }
-  return `<span class="${cls} person-photo-placeholder" aria-hidden="true">${esc(initials(person.name))}</span>`;
+  const linked = Boolean(person.website);
+  const visual = person.photo
+    ? `<img class="${cls}" src="${esc(asset(person.photo))}" alt="${linked ? '' : esc(person.name)}" loading="lazy">`
+    : `<span class="${cls} person-photo-placeholder" aria-hidden="true">${esc(initials(person.name))}</span>`;
+  if (!linked) return visual;
+  return `<a class="person-photo-link" href="${esc(person.website)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(person.name)}'s website">${visual}</a>`;
 }
 
 export const ROLE_LABELS = {
