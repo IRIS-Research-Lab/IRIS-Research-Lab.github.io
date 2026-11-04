@@ -148,39 +148,44 @@ a:hover { color: var(--iris-orange); }
     padding: 5rem 0 4.5rem;
 }
 
-/* Rings and the orange dot sit on the gradient's old center (85% / 40%).
-   Four rings share an 8s cycle, staggered by 2s. Scale eases outward in
-   the keyframes; only transform and opacity animate. */
+/* Rings and the orange dot share the old gradient center (85% / 40%).
+   The ring box is the distance from that point to the far corner, so
+   scale 1 clears every edge. Four rings, 8s cycle, 2s stagger. Only
+   transform and opacity animate. */
 .hero-ripple {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    container-type: size;
+    overflow: hidden;
+}
+
+.hero-ripple-dot,
+.hero-ripple-ring {
     position: absolute;
     left: 85%;
     top: 40%;
-    width: 0;
-    height: 0;
-    z-index: 0;
-    pointer-events: none;
+    translate: -50% -50%;
 }
 
 .hero-ripple-dot {
-    position: absolute;
     width: 140px;
     height: 140px;
-    left: -70px;
-    top: -70px;
     border-radius: 50%;
     background: rgba(232, 117, 0, 0.18);
 }
 
 .hero-ripple-ring {
-    position: absolute;
-    width: 20rem;
-    height: 20rem;
-    left: -10rem;
-    top: -10rem;
+    /* 1.3 puts the stroke past the farthest corner while it is still faint.
+       85cqw / 60cqh is the bottom-left corner, the far point from 85% 40%. */
+    width: calc(2 * 1.3 * hypot(85cqw, 60cqh));
+    aspect-ratio: 1;
+    height: auto;
     border-radius: 50%;
-    border: 1.5px solid rgba(143, 193, 169, 0.75);
+    border: 2.5px solid rgba(143, 193, 169, 0.85);
     opacity: 0;
-    transform: scale(0.4);
+    transform: scale(0.06);
     transform-origin: center;
     animation: hero-ripple 8s linear infinite;
     will-change: transform, opacity;
@@ -193,27 +198,28 @@ a:hover { color: var(--iris-orange); }
 
 @keyframes hero-ripple {
     0% {
-        transform: scale(0.4);
+        transform: scale(0.06);
         opacity: 0;
     }
     12% {
-        transform: scale(0.62);
-        opacity: 0.36;
+        opacity: 0.34;
     }
-    30% {
-        transform: scale(0.95);
-        opacity: 0.3;
+    40% {
+        opacity: 0.24;
     }
-    55% {
-        transform: scale(1.35);
-        opacity: 0.2;
+    68% {
+        opacity: 0.14;
     }
-    80% {
-        transform: scale(1.75);
-        opacity: 0.09;
+    /* Scale runs 0.06 → 1. The far corner is ~3/4 through the cycle,
+       still faint, then the stroke leaves the hero and fades out. */
+    84% {
+        opacity: 0.12;
+    }
+    94% {
+        opacity: 0.04;
     }
     100% {
-        transform: scale(2.1);
+        transform: scale(1);
         opacity: 0;
     }
 }
