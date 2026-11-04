@@ -25,6 +25,11 @@
         "type": "string",
         "pattern": "^https?://"
       },
+      "photoPosition": {
+        "description": "CSS object-position for this person's round photo, two tokens such as \"center top\". Omit it to keep the default center crop.",
+        "type": "string",
+        "pattern": "^(left|center|right|0%|[1-9][0-9]?%|100%) (top|center|bottom|0%|[1-9][0-9]?%|100%)$"
+      },
       "interests": { "type": "array", "items": { "type": "string", "minLength": 1 }, "maxItems": 5 },
       "links": {
         "type": "object",

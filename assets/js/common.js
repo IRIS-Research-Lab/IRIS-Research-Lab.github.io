@@ -34,10 +34,17 @@ export function initials(name) {
   return name.replace(/\(.*?\)/g, '').trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
 }
 
+const PHOTO_POSITION = /^(?:left|center|right|0%|[1-9]\d?%|100%) (?:top|center|bottom|0%|[1-9]\d?%|100%)$/;
+
+function photoPositionStyle(person) {
+  const value = typeof person.photoPosition === 'string' ? person.photoPosition.trim() : '';
+  return PHOTO_POSITION.test(value) ? ` style="object-position: ${value}"` : '';
+}
+
 export function photoHTML(person, cls = 'person-photo') {
   const linked = Boolean(person.website);
   const visual = person.photo
-    ? `<img class="${cls}" src="${esc(asset(person.photo))}" alt="${linked ? '' : esc(person.name)}" loading="lazy">`
+    ? `<img class="${cls}" src="${esc(asset(person.photo))}" alt="${linked ? '' : esc(person.name)}" loading="lazy"${photoPositionStyle(person)}>`
     : `<span class="${cls} person-photo-placeholder" aria-hidden="true">${esc(initials(person.name))}</span>`;
   if (!linked) return visual;
   return `<a class="person-photo-link" href="${esc(person.website)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(person.name)}'s website">${visual}</a>`;
