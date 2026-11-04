@@ -1,4 +1,4 @@
-// Research publications: lab work and explicitly selected prior-work examples.
+// Research publications. `show` decides what is listed; a missing flag hides years before 2026.
 import { loadJSON, esc, asset, linkButtonHTML } from './common.js';
 
 const container = document.getElementById('publications');
@@ -34,7 +34,15 @@ try {
       </article>`;
   }
 
-  const shown = pubs.filter(p => (p.lab === true || p.research_example === true) && p.group !== 'submission');
+  // `show` is the display source of truth. An omitted flag hides work from
+  // before 2026 and otherwise keeps the lab / research-example / non-submission rule.
+  function shownOnResearch(p) {
+    if (p.show === true) return true;
+    if (p.show === false) return false;
+    return p.year >= 2026 && (p.lab === true || p.research_example === true) && p.group !== 'submission';
+  }
+
+  const shown = pubs.filter(shownOnResearch);
   if (!shown.length) {
     container.innerHTML = `
       <div class="iris-card empty-state">

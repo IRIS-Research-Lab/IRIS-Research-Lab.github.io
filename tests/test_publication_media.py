@@ -82,8 +82,14 @@ class MediaTests(unittest.TestCase):
         self.assertFalse(list(validator.iter_errors([pub])))
         pub['research_example'] = True
         pub['highlight'] = True
+        pub['show'] = True
+        self.assertFalse(list(validator.iter_errors([pub])))
+        pub['show'] = False
         self.assertFalse(list(validator.iter_errors([pub])))
         pub['research_example'] = 'true'
+        self.assertTrue(list(validator.iter_errors([pub])))
+        pub['research_example'] = True
+        pub['show'] = 'false'
         self.assertTrue(list(validator.iter_errors([pub])))
 
 

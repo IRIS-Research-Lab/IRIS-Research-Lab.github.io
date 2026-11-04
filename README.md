@@ -81,8 +81,10 @@ fails before this workflow exists on main, the website merge supplies the first 
 
 `/research/` is the canonical publications page. `/publications/` redirects there, preserving
 query strings and paper hashes when JavaScript is enabled, with a meta refresh and visible fallback link.
-Research includes non-submission records with `lab: true` or the optional `research_example: true`.
-The latter selects example prior work without changing affiliation; absent/false preserves the old filter.
+Research lists an entry when its `show` flag is `true`, and hides it when `show` is `false`.
+That flag is the display source of truth. When `show` is omitted, years before 2026 stay hidden;
+2026 and later still require `lab: true` or `research_example: true`, and `submission` stays hidden.
+`research_example` marks example prior work without changing affiliation. It does not, by itself, list a paper.
 The 2026-11-03 hoak.me import is one-time static source content. No import runs during builds or in browsers.
 The site reads JSON and figures from IRIS-Updates; hoak.me URLs are outbound publication links only.
 
