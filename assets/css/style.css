@@ -351,7 +351,7 @@ a.iris-card:hover, .iris-card.hoverable:hover {
 /* ==========================================
    Lab photos and videos
 ========================================== */
-.lab-photos { margin-top: 0.5rem; scroll-margin-top: 5.5rem; }
+.lab-photos { margin-bottom: 3rem; scroll-margin-top: 5.5rem; }
 
 .lab-gallery {
   display: grid;

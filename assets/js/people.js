@@ -1,4 +1,4 @@
-// assets/js/people.js — renders data/people.json grouped by role, then Photos & fun.
+// assets/js/people.js — renders Photos & fun, then data/people.json grouped by role.
 import { loadJSON, esc, asset, photoHTML, formatDate, ROLE_LABELS } from './common.js';
 
 const SECTIONS = [
