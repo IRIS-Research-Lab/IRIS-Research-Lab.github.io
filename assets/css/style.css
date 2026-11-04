@@ -144,11 +144,100 @@ a:hover { color: var(--iris-orange); }
     position: relative;
     overflow: hidden;
     color: #ffffff;
-    background:
-        radial-gradient(circle at 85% 40%, rgba(232, 117, 0, 0.18) 0 70px, transparent 71px),
-        repeating-radial-gradient(circle at 85% 40%, rgba(143, 193, 169, 0.10) 0 2px, transparent 3px 26px),
-        linear-gradient(135deg, var(--iris-green-dark), var(--iris-green));
+    background: linear-gradient(135deg, var(--iris-green-dark), var(--iris-green));
     padding: 5rem 0 4.5rem;
+}
+
+/* Rings and the orange dot sit on the gradient's old center (85% / 40%).
+   Four rings share an 8s cycle, staggered by 2s. Scale eases outward in
+   the keyframes; only transform and opacity animate. */
+.hero-ripple {
+    position: absolute;
+    left: 85%;
+    top: 40%;
+    width: 0;
+    height: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hero-ripple-dot {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    left: -70px;
+    top: -70px;
+    border-radius: 50%;
+    background: rgba(232, 117, 0, 0.18);
+}
+
+.hero-ripple-ring {
+    position: absolute;
+    width: 20rem;
+    height: 20rem;
+    left: -10rem;
+    top: -10rem;
+    border-radius: 50%;
+    border: 1.5px solid rgba(143, 193, 169, 0.75);
+    opacity: 0;
+    transform: scale(0.4);
+    transform-origin: center;
+    animation: hero-ripple 8s linear infinite;
+    will-change: transform, opacity;
+}
+
+.hero-ripple-ring:nth-child(1) { animation-delay: -6s; }
+.hero-ripple-ring:nth-child(2) { animation-delay: -4s; }
+.hero-ripple-ring:nth-child(3) { animation-delay: -2s; }
+.hero-ripple-ring:nth-child(4) { animation-delay: 0s; }
+
+@keyframes hero-ripple {
+    0% {
+        transform: scale(0.4);
+        opacity: 0;
+    }
+    12% {
+        transform: scale(0.62);
+        opacity: 0.36;
+    }
+    30% {
+        transform: scale(0.95);
+        opacity: 0.3;
+    }
+    55% {
+        transform: scale(1.35);
+        opacity: 0.2;
+    }
+    80% {
+        transform: scale(1.75);
+        opacity: 0.09;
+    }
+    100% {
+        transform: scale(2.1);
+        opacity: 0;
+    }
+}
+
+.hero .container {
+    position: relative;
+    z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero {
+        background:
+            radial-gradient(circle at 85% 40%, rgba(232, 117, 0, 0.18) 0 70px, transparent 71px),
+            repeating-radial-gradient(circle at 85% 40%, rgba(143, 193, 169, 0.10) 0 2px, transparent 3px 26px),
+            linear-gradient(135deg, var(--iris-green-dark), var(--iris-green));
+    }
+
+    .hero-ripple {
+        display: none;
+    }
+
+    .hero-ripple-ring {
+        animation: none;
+    }
 }
 
 .hero h1 {
