@@ -1,0 +1,12 @@
+[
+  {
+    "id": "2026-11-03-field-setup",
+    "type": "image",
+    "src": "https://iris-research-lab.github.io/assets/media/lab/2026-11-03/field-setup.webp",
+    "fallback": "https://iris-research-lab.github.io/assets/media/lab/2026-11-03/field-setup.jpg",
+    "width": 1600,
+    "height": 1200,
+    "alt": "A red step ladder with a small black camera mounted on top, cabled to a laptop in the bed of a white pickup truck.",
+    "caption": "Field setup"
+  }
+]

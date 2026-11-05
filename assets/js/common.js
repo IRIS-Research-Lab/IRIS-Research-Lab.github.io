@@ -34,11 +34,20 @@ export function initials(name) {
   return name.replace(/\(.*?\)/g, '').trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
 }
 
+const PHOTO_POSITION = /^(?:left|center|right|0%|[1-9]\d?%|100%) (?:top|center|bottom|0%|[1-9]\d?%|100%)$/;
+
+function photoPositionStyle(person) {
+  const value = typeof person.photoPosition === 'string' ? person.photoPosition.trim() : '';
+  return PHOTO_POSITION.test(value) ? ` style="object-position: ${value}"` : '';
+}
+
 export function photoHTML(person, cls = 'person-photo') {
-  if (person.photo) {
-    return `<img class="${cls}" src="${esc(asset(person.photo))}" alt="${esc(person.name)}" loading="lazy">`;
-  }
-  return `<span class="${cls} person-photo-placeholder" aria-hidden="true">${esc(initials(person.name))}</span>`;
+  const site = person.links?.website || '';
+  const visual = person.photo
+    ? `<img class="${cls}" src="${esc(asset(person.photo))}" alt="${site ? '' : esc(person.name)}" loading="lazy"${photoPositionStyle(person)}>`
+    : `<span class="${cls} person-photo-placeholder" aria-hidden="true">${esc(initials(person.name))}</span>`;
+  if (!site) return visual;
+  return `<a class="person-photo-link" href="${esc(site)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(person.name)}'s website">${visual}</a>`;
 }
 
 export const ROLE_LABELS = {

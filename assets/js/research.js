@@ -1,16 +1,24 @@
-// assets/js/research.js — renders research themes from data/research.json.
+// Publications are the primary Research content; keep source-owned themes compact.
+import './publications.js';
 import { loadJSON, esc } from './common.js';
 
-const themes = await loadJSON('research');
-document.getElementById('themes').innerHTML = themes.map(t => `
-  <div class="iris-card mb-4" id="${esc(t.id)}">
-    <div class="d-flex gap-3 align-items-start">
-      <div class="theme-icon flex-shrink-0 mb-0"><i class="${esc(t.icon || 'fa-solid fa-flask')}"></i></div>
-      <div>
-        <h2 class="h4 mb-2"><span class="theme-letter">${esc(t.title[0])}</span>${esc(t.title.slice(1))}</h2>
-        <p class="mb-0">${esc(t.summary)}</p>
-      </div>
-    </div>
-  </div>`).join('');
-
-if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
+try {
+  const themes = await loadJSON('research');
+  document.getElementById('themes').innerHTML = themes.map(t => `
+    <details id="${esc(t.id)}" class="research-topic">
+      <summary>${esc(t.title)}</summary>
+      <p class="text-muted small mt-2 mb-0">${esc(t.summary)}</p>
+    </details>`).join('');
+  function revealTheme() {
+    const theme = themes.find(t => `#${t.id}` === location.hash);
+    if (theme) {
+      const el = document.getElementById(theme.id);
+      el.open = true;
+      el.scrollIntoView();
+    }
+  }
+  revealTheme();
+  addEventListener('hashchange', revealTheme);
+} catch {
+  document.querySelector('.research-focus').hidden = true;
+}

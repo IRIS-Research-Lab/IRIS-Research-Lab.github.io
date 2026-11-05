@@ -340,13 +340,87 @@ a.iris-card:hover, .iris-card.hoverable:hover {
 .person-links { display: flex; justify-content: center; gap: 0.9rem; margin-top: 1rem; }
 .person-links a { font-size: 1.15rem; }
 
+.person-photo-link {
+    display: inline-block;
+    max-width: 100%;
+    border-radius: 50%;
+    line-height: 0;
+}
+.person-photo-link:hover img,
+.person-photo-link:hover .person-photo,
+.person-photo-link:hover .person-photo-placeholder,
+.person-photo-link:focus-visible img,
+.person-photo-link:focus-visible .person-photo,
+.person-photo-link:focus-visible .person-photo-placeholder {
+    border-color: var(--iris-orange);
+}
+.person-photo-link:focus-visible {
+    outline: 3px solid var(--iris-orange);
+    outline-offset: 4px;
+}
+
 .member-strip { display: flex; flex-wrap: wrap; gap: 1.25rem; }
-.member-strip a { text-align: center; width: 110px; color: var(--color-text); font-size: 0.85rem; font-weight: 500; }
+.member-strip > a,
+.member-strip .member {
+    text-align: center;
+    width: 110px;
+    color: var(--color-text);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+.member-strip .member-name { display: block; color: inherit; }
 .member-strip img, .member-strip .person-photo-placeholder {
     width: 84px; height: 84px; border-radius: 50%; object-fit: cover;
     border: 3px solid var(--iris-green-soft); margin-bottom: 0.4rem; font-size: 1.6rem;
 }
-.member-strip a:hover { color: var(--iris-orange); }
+.member-strip > a:hover,
+.member-strip .member-name:hover { color: var(--iris-orange); }
+
+/* ==========================================
+   Lab photos and videos
+========================================== */
+.lab-photos { margin-bottom: 3rem; scroll-margin-top: 5.5rem; }
+
+.lab-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.lab-media-card {
+  margin: 0;
+  min-width: 0;
+  max-width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.lab-media-card picture { display: block; }
+
+.lab-media-visual {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  background: var(--iris-green-dark);
+}
+
+.lab-media-caption {
+  padding: 0.75rem 1rem 0.9rem;
+  font-size: 0.9rem;
+  color: var(--color-muted);
+}
+
+.lab-media-caption time {
+  font-weight: 600;
+  color: var(--iris-green);
+}
+
+.lab-media-dot { margin: 0 0.4rem; }
 
 /* ==========================================
    Publications
@@ -365,14 +439,19 @@ a.iris-card:hover, .iris-card.hoverable:hover {
 }
 
 .pub-img {
-    flex: 0 0 180px;
-    width: 180px;
-    height: 110px;
+    flex: 0 0 240px;
+    width: 240px;
+    height: 160px;
     object-fit: contain;
     background: #fff;
     border-radius: 8px;
     border: 1px solid var(--color-border);
 }
+
+.pub > div { min-width: 0; overflow-wrap: anywhere; }
+.pub, .research-topic { scroll-margin-top: 6rem; }
+.research-topic { border-top: 1px solid var(--color-border); padding: 0.8rem 0; }
+.research-topic summary { color: var(--iris-green); font-weight: 600; cursor: pointer; }
 
 .pub-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.2rem; color: var(--color-text); }
 .pub-authors { font-size: 0.9rem; color: var(--color-muted); margin-bottom: 0.15rem; }

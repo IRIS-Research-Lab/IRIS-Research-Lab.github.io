@@ -1,0 +1,49 @@
+name: Publish site with shared data
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Recovery when a source refresh request is missed.
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install 'jsonschema[format]>=4.18'
+      - name: Build from private IRIS-Updates main
+        run: python scripts/build.py
+        env:
+          IRIS_UPDATES_TOKEN: ${{ secrets.IRIS_UPDATES_TOKEN }}
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

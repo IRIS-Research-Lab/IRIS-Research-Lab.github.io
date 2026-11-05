@@ -1,5 +1,5 @@
-// assets/js/people.js — renders data/people.json grouped by role.
-import { loadJSON, esc, photoHTML, ROLE_LABELS } from './common.js';
+// assets/js/people.js — renders Photos & fun, then data/people.json grouped by role.
+import { loadJSON, esc, asset, photoHTML, formatDate, ROLE_LABELS } from './common.js';
 
 const SECTIONS = [
   { title: 'Faculty', roles: ['pi'] },
@@ -55,6 +55,48 @@ const alumni = people.filter(p => p.alumni);
 document.getElementById('people').innerHTML =
   SECTIONS.map(s => section(s.title, current.filter(p => s.roles.includes(p.role)))).join('') +
   section('Alumni', alumni);
+
+function dimensions(item) {
+  if (!Number.isInteger(item.width) || !Number.isInteger(item.height)) return '';
+  return ` width="${item.width}" height="${item.height}"`;
+}
+
+function captionHTML(item) {
+  const parts = [];
+  if (item.date) parts.push(`<time datetime="${esc(item.date)}">${esc(formatDate(item.date))}</time>`);
+  if (item.caption) parts.push(esc(item.caption));
+  if (!parts.length) return '';
+  return `<figcaption class="lab-media-caption">${parts.join('<span class="lab-media-dot" aria-hidden="true">·</span>')}</figcaption>`;
+}
+
+function mediaHTML(item) {
+  const size = dimensions(item);
+  let visual;
+  if (item.type === 'video') {
+    const poster = item.poster ? ` poster="${esc(asset(item.poster))}"` : '';
+    visual = `<video class="lab-media-visual" controls muted playsinline preload="metadata" loading="lazy"${poster}${size} aria-label="${esc(item.alt)}">` +
+      `<source src="${esc(asset(item.src))}" type="video/mp4"></video>`;
+  } else if (item.fallback) {
+    visual = `<picture><source srcset="${esc(asset(item.src))}" type="image/webp">` +
+      `<img class="lab-media-visual" src="${esc(asset(item.fallback))}" alt="${esc(item.alt)}"${size} loading="lazy" decoding="async"></picture>`;
+  } else {
+    visual = `<img class="lab-media-visual" src="${esc(asset(item.src))}" alt="${esc(item.alt)}"${size} loading="lazy" decoding="async">`;
+  }
+  return `<figure class="lab-media-card">${visual}${captionHTML(item)}</figure>`;
+}
+
+function renderLabMedia(media) {
+  const host = document.getElementById('photos');
+  if (!host || !Array.isArray(media) || !media.length) return;
+  const items = [...media].sort((a, b) => (b.date || '').localeCompare(a.date || '') || String(a.id).localeCompare(String(b.id)));
+  host.hidden = false;
+  host.setAttribute('aria-labelledby', 'photos-title');
+  host.innerHTML = `<h2 class="section-title" id="photos-title">Photos &amp; fun</h2>` +
+    `<div class="lab-gallery">${items.map(mediaHTML).join('')}</div>`;
+}
+
+const media = await loadJSON('lab_media');
+renderLabMedia(media);
 
 // Scroll to #id after rendering (the target didn't exist when the page loaded).
 if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();

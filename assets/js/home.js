@@ -23,5 +23,12 @@ document.getElementById('news-list').innerHTML = news
 
 document.getElementById('members').innerHTML = people
   .filter(p => !p.alumni)
-  .map(p => `<a href="/people/#${esc(p.id)}">${photoHTML(p, '')}<div>${esc(p.name)}</div></a>`)
+  .map(p => {
+    const profile = `/people/#${esc(p.id)}`;
+    if (!p.links?.website) {
+      return `<a href="${profile}">${photoHTML(p, '')}<div>${esc(p.name)}</div></a>`;
+    }
+    // The photo link cannot sit inside the profile link.
+    return `<div class="member">${photoHTML(p, '')}<a class="member-name" href="${profile}">${esc(p.name)}</a></div>`;
+  })
   .join('');
