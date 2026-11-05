@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Validate the lab's data files. Run locally with:
 
-    pip install jsonschema
-    python scripts/validate.py
+    uv pip install 'jsonschema[format]>=4.18'
+    uv run python scripts/validate.py
 
 The same check runs on every pull request (.github/workflows/validate.yml).
 """

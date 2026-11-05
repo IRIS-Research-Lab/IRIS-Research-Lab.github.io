@@ -24,10 +24,11 @@ Please don't edit the HTML/JS unless we've talked about it.
 2. Make your edit. Mind the commas: every item in a list is separated by `,` except the last one.
 3. Check it locally from your **website checkout** (with IRIS-Updates alongside it):
    ```sh
-   pip install "jsonschema[format]"
-   python scripts/build.py --data-dir ../IRIS-Updates/data
+   uv venv
+   uv pip install 'jsonschema[format]>=4.18'
+   uv run python scripts/build.py --data-dir ../IRIS-Updates/data
    ```
-4. Preview locally (optional): `python3 -m http.server 8000 --directory _site` from the website repo root, then open
+4. Preview locally (optional): `uv run python -m http.server 8000 --directory _site` from the website repo root, then open
    <http://localhost:8000>.
 5. Open a pull request in **IRIS-Updates**. Prof. Hoak (or another lab member) should review it before
    merge. The source merge requests a website build; its validation must pass before publication. If
@@ -89,7 +90,6 @@ Add an object to `data/pubs.json` (order in the file doesn't matter; the site so
   "interests": ["Adversarial robustness", "Vision models"],
   "links": {
     "website": "https://janedoe.github.io",
-    "email": "jane.doe@utdallas.edu",
     "scholar": "https://scholar.google.com/citations?user=XXXXXXX",
     "github": "https://github.com/janedoe",
     "linkedin": "https://www.linkedin.com/in/janedoe"
@@ -100,7 +100,7 @@ Add an object to `data/pubs.json` (order in the file doesn't matter; the site so
 - **`id`**: `firstname-lastname`, lowercase. Must be unique.
 - **`role`**: `pi`, `postdoc`, `phd`, `ms`, `undergrad`, or `visitor`.
 - **`interests`**: up to 5 short phrases.
-- **`links`**: include only the ones you want. Also supported: `orcid`, `bluesky`, `twitter`.
+- **`links`**: include only the ones you want. Also supported: `orcid`, `bluesky`, `twitter`. The Lab page does not show email addresses.
 - No photo yet? Leave out `photo` and your initials will be shown instead.
 
 **Leaving the lab?** Keep your entry and add an `alumni` object. You'll move to the Alumni section:
@@ -135,8 +135,8 @@ Keep optimized photos under 2 MB and videos under 10 MB so the repo does not nee
 The optimizer reads the original and writes a WebP plus a high-quality JPEG fallback, at most 1600px wide, with EXIF, GPS, and XMP removed. It does not modify the original.
 
 ```sh
-pip install pillow
-python3 scripts/optimize_lab_media.py original.jpg assets/media/lab/2026-12-01/lunch
+uv pip install pillow
+uv run python scripts/optimize_lab_media.py original.jpg assets/media/lab/2026-12-01/lunch
 ```
 
 Paste the printed object into `data/lab_media.json`, replace `alt` with what a screen reader should hear, and add `caption` only if you want a visible line:
@@ -169,7 +169,7 @@ ffmpeg -y -i original.mov \
   -crf 28 -preset slow -movflags +faststart \
   assets/media/lab/2026-12-01/clip.mp4
 ffmpeg -y -ss 00:00:01 -i original.mov -map_metadata -1 -frames:v 1 /tmp/clip-poster.jpg
-python3 scripts/optimize_lab_media.py /tmp/clip-poster.jpg assets/media/lab/2026-12-01/clip-poster
+uv run python scripts/optimize_lab_media.py /tmp/clip-poster.jpg assets/media/lab/2026-12-01/clip-poster
 ```
 
 The command above keeps the audio track. The page starts the clip muted, and the controls can unmute it. Add `-an` before the output path when there is no audio worth keeping. If the MP4 cannot stay under 10 MB without falling apart, say so in the pull request instead of committing the camera original.

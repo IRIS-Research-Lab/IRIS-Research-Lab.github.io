@@ -12,7 +12,6 @@ const SECTIONS = [
 
 const LINKS = [
   ['website', 'fa-solid fa-globe', 'Website'],
-  ['email', 'fa-solid fa-envelope', 'Email'],
   ['scholar', 'fa-brands fa-google-scholar', 'Google Scholar'],
   ['github', 'fa-brands fa-github', 'GitHub'],
   ['linkedin', 'fa-brands fa-linkedin', 'LinkedIn'],
@@ -24,10 +23,9 @@ const LINKS = [
 function card(p) {
   const links = LINKS
     .filter(([k]) => p.links?.[k])
-    .map(([k, icon, label]) => {
-      const href = k === 'email' ? `mailto:${p.links[k]}` : p.links[k];
-      return `<a href="${esc(href)}" aria-label="${label}" title="${label}" target="_blank" rel="noopener"><i class="${icon}"></i></a>`;
-    }).join('');
+    .map(([k, icon, label]) =>
+      `<a href="${esc(p.links[k])}" aria-label="${label}" title="${label}" target="_blank" rel="noopener"><i class="${icon}"></i></a>`
+    ).join('');
   const subtitle = p.alumni
     ? `${ROLE_LABELS[p.role]}, ${esc(p.alumni.years)}${p.alumni.now ? `<br>Now: ${esc(p.alumni.now)}` : ''}`
     : esc(p.title || ROLE_LABELS[p.role]);
