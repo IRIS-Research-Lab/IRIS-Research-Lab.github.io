@@ -26,5 +26,5 @@ uv run python -m http.server 8000 --directory _site
 
 Open <http://localhost:8000>. To build from the private source instead of a local
 checkout, set `IRIS_UPDATES_TOKEN` and run `uv run python scripts/build.py`. Pull
-request checks run `uv run python scripts/build.py --published`, which validates the
-current public snapshot without that token.
+request checks run `python scripts/build.py --published` with pip, which validates
+the current public snapshot without that token.
