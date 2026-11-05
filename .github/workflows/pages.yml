@@ -7,6 +7,10 @@ on:
     # Recovery when a source refresh request is missed.
     - cron: '17 * * * *'
   workflow_dispatch:
+  # IRIS-Updates POSTs event_type lab-data-refresh. That dispatch API accepts a
+  # fine-grained PAT with Contents: Read and write and does not need Actions: write.
+  repository_dispatch:
+    types: [lab-data-refresh]
 
 permissions:
   contents: read
