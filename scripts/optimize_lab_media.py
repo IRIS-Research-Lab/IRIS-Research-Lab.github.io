@@ -5,9 +5,9 @@ Reads an original (it is not modified) and writes OUTPUT.webp plus OUTPUT.jpg.
 The results are at most 1600px wide, and EXIF, GPS, and XMP are left behind.
 Prints a data/lab_media.json object to paste.
 
-    python3 scripts/optimize_lab_media.py original.jpg assets/media/lab/2026-12-01/lunch
+    uv run python scripts/optimize_lab_media.py original.jpg assets/media/lab/2026-12-01/lunch
 
-Pillow is required (`pip install pillow`). Videos are not handled here; see
+Pillow is required (`uv pip install pillow`). Videos are not handled here; see
 CONTRIBUTING.md for the ffmpeg command.
 """
 import argparse
@@ -106,7 +106,7 @@ def main(argv=None):
     try:
         result = optimize(args.source, args.stem, max_width=args.max_width)
     except ImportError:
-        print("Pillow is required: pip install pillow", file=sys.stderr)
+        print("Pillow is required: uv pip install pillow", file=sys.stderr)
         return 1
     except (OSError, RuntimeError, ValueError) as exc:
         print(f"Could not optimize {args.source}: {exc}", file=sys.stderr)
