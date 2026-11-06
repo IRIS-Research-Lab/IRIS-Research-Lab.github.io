@@ -20,11 +20,13 @@ const featured = shown.find(pub => pub.research_example && pub.group === 'thesis
 const root = document.getElementById('featured-root');
 if (root && featured) {
   const kind = KIND_LABELS[featured.group] || featured.group;
+  // Same switch as Research. Default home shows the featured show:true work only.
+  const preview = new URLSearchParams(location.search).get('preview') === 'historical';
   const highlighted = pubs.filter(pub => pub.image && pub.group !== 'submission' && pub.highlight);
   const withImage = highlighted.length
     ? highlighted
     : pubs.filter(pub => pub.image && pub.group !== 'submission');
-  const figured = byYearThenSource(withImage).slice(0, 3);
+  const figured = preview ? byYearThenSource(withImage).slice(0, 3) : [];
   const needsNote = figured.some(pub => !shownOnResearch(pub));
   root.innerHTML = `
     <section class="band" id="featured" aria-labelledby="featured-label">
