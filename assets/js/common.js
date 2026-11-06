@@ -60,7 +60,9 @@ export function photoHTML(person, cls = 'person-photo') {
     : `<span class="${cls} person-photo-placeholder" aria-hidden="true">${esc(initials(person.name))}</span>`;
   if (!site) return visual;
   // The website field is the photo's destination. Do not also print that URL as text.
-  return `<a class="person-photo-link" href="${esc(site)}">${visual}</a>`;
+  // A photo's alt names the link. Initials are aria-hidden, so that link needs its own name.
+  const label = person.photo ? '' : ` aria-label="${esc(`Website for ${person.name}`)}"`;
+  return `<a class="person-photo-link" href="${esc(site)}"${label}>${visual}</a>`;
 }
 
 export const ROLE_LABELS = {
@@ -103,7 +105,8 @@ export function labAuthorHTML(authors, people) {
   for (const person of people || []) {
     const name = String(person.name || '').replace(/\s*\(.*?\)/g, '').trim();
     if (!name) continue;
-    const re = new RegExp(`\\b${escapeRegExp(name)}\\b\\*?`, 'g');
+    // Match the escaped author string, so names with ', &, or < still bold.
+    const re = new RegExp(`\\b${escapeRegExp(esc(name))}\\b\\*?`, 'g');
     html = html.replace(re, match => `<strong>${match}</strong>`);
   }
   return html;

@@ -253,6 +253,19 @@ h1 {
   margin: 0;
 }
 
+/* .page-head p is more specific than .kicker. Restate the eyebrow so it stays orange mono. */
+.page-head .kicker {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--iris-orange);
+  margin: 0 0 14px;
+  max-width: none;
+}
+
 #research-gate { margin-bottom: 28px; }
 
 .prose {
