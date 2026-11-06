@@ -100,7 +100,7 @@ Add an object to `data/pubs.json` (order in the file doesn't matter; the site so
 - **`id`**: `firstname-lastname`, lowercase. Must be unique.
 - **`role`**: `pi`, `postdoc`, `phd`, `ms`, `undergrad`, or `visitor`.
 - **`interests`**: up to 5 short phrases.
-- **`links`**: include only the ones you want. Also supported: `orcid`, `bluesky`, `twitter`. The Lab page does not show email addresses.
+- **`links`**: include only the ones you want. Also supported: `orcid`, `bluesky`, `twitter`. The People page does not show email addresses. A photo links to `links.website` when that field is set.
 - No photo yet? Leave out `photo` and your initials will be shown instead.
 
 **Leaving the lab?** Keep your entry and add an `alumni` object. You'll move to the Alumni section:
@@ -123,10 +123,8 @@ Add an object to `data/news.json` (newest items appear first automatically):
 
 ## Add a lab photo or video
 
-Photos & fun is the gallery on the Lab page (`/people/`). It reads [`data/lab_media.json`](data/lab_media.json).
-Adding an item is one object in that array. The page sorts newest `date` first, lazy-loads images, and leaves the section out when the array is empty.
-
-There is no video in the gallery yet. A `type` of `video` is already rendered as `<video controls muted playsinline>` with its poster. Follow the video steps below when you have a clip.
+Photos & fun on the People page (`/people/`) reads [`data/lab_media.json`](data/lab_media.json).
+The page shows **one** photo: the newest `type: "image"` entry. Other photos and any videos stay in the catalog and on disk; they are not deleted, and they are not shown. The section is omitted when the catalog has no image. Add an item as one object in that array.
 
 Keep optimized photos under 2 MB and videos under 10 MB so the repo does not need Git LFS. The build rejects larger lab files. Do not commit camera originals; they carry GPS and other EXIF.
 
@@ -159,7 +157,7 @@ Paste the printed object into `data/lab_media.json`, replace `alt` with what a s
 
 ### Video
 
-Transcode to H.264 MP4 with the moov atom at the front (`+faststart`), a reasonable bitrate, and a file under about 10 MB. Strip metadata so a phone clip does not keep its GPS. Then make a poster with the photo optimizer (that step also strips the poster's metadata).
+Video entries can stay in the catalog. The People page does not play them; it shows one photo. Transcode to H.264 MP4 when you are keeping a clip on disk. with the moov atom at the front (`+faststart`), a reasonable bitrate, and a file under about 10 MB. Strip metadata so a phone clip does not keep its GPS. Then make a poster with the photo optimizer (that step also strips the poster's metadata).
 
 ```sh
 ffmpeg -y -i original.mov \
@@ -172,7 +170,7 @@ ffmpeg -y -ss 00:00:01 -i original.mov -map_metadata -1 -frames:v 1 /tmp/clip-po
 uv run python scripts/optimize_lab_media.py /tmp/clip-poster.jpg assets/media/lab/2026-12-01/clip-poster
 ```
 
-The command above keeps the audio track. The page starts the clip muted, and the controls can unmute it. Add `-an` before the output path when there is no audio worth keeping. If the MP4 cannot stay under 10 MB without falling apart, say so in the pull request instead of committing the camera original.
+The command above keeps the audio track. The People page does not play catalog videos. Add `-an` before the output path when there is no audio worth keeping. If the MP4 cannot stay under 10 MB without falling apart, say so in the pull request instead of committing the camera original.
 
 ```json
 {
