@@ -8,7 +8,6 @@ if (!container) {
   // Loaded only where the list exists. Home does not mount this script.
 } else {
   const note = document.getElementById('honesty-note');
-  const gate = document.getElementById('research-gate');
   const preview = new URLSearchParams(location.search).get('preview') === 'historical';
 
   try {
@@ -20,7 +19,6 @@ if (!container) {
     const historical = ordered.some(pub => !shownOnResearch(pub));
 
     if (note) note.innerHTML = historical ? HONESTY_NOTE : '';
-    if (gate) gate.hidden = historical;
 
     if (!ordered.length) {
       container.innerHTML = `

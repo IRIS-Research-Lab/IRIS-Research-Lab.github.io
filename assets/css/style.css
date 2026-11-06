@@ -60,6 +60,9 @@ html { color-scheme: dark; }
 
 body {
   margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background: var(--iris-bg);
   color: var(--iris-ink);
   font-family: var(--font-sans);
@@ -113,10 +116,21 @@ a:focus-visible {
 }
 
 .page {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   padding: 44px var(--space-gutter) 56px;
 }
 
-.site-header { margin-bottom: 40px; }
+/* Short pages: main absorbs leftover viewport space so the footer sits at the bottom.
+   Tall pages: the shell grows with the document and the footer follows the content. */
+main { flex: 1 0 auto; }
+
+.site-header {
+  flex-shrink: 0;
+  margin-bottom: 40px;
+}
 
 .site-nav {
   display: flex;
@@ -144,10 +158,26 @@ a:focus-visible {
 .logo:focus-visible { color: var(--iris-mint-hover); text-decoration: none; }
 
 .logo-dot {
+  display: inline-block;
   color: var(--iris-orange);
   font-style: normal;
   margin-right: 8px;
   letter-spacing: 0;
+  /* Recording LED: soft opacity pulse and a faint glow. The wordmark stays still. */
+  animation: iris-rec-light 1.4s ease-in-out infinite;
+}
+
+@keyframes iris-rec-light {
+  0%,
+  100% {
+    opacity: 1;
+    text-shadow: 0 0 7px color-mix(in srgb, var(--iris-orange) 55%, transparent);
+  }
+
+  50% {
+    opacity: 0.35;
+    text-shadow: 0 0 0 color-mix(in srgb, var(--iris-orange) 0%, transparent);
+  }
 }
 
 .nav-links {
@@ -265,8 +295,6 @@ h1 {
   margin: 0 0 14px;
   max-width: none;
 }
-
-#research-gate { margin-bottom: 28px; }
 
 .prose {
   font-size: 16px;
@@ -628,6 +656,7 @@ h1 {
 }
 
 .site-footer {
+  flex-shrink: 0;
   margin-top: 48px;
   padding-top: 16px;
   border-top: 1px solid var(--iris-rule-strong);
@@ -692,6 +721,13 @@ h1 {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .logo-dot {
+    animation: none !important;
+    opacity: 1;
+    text-shadow: none;
   }
 }
