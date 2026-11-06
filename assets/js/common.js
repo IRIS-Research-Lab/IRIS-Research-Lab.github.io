@@ -2,6 +2,17 @@
 
 export const SITE = 'https://iris-research-lab.github.io';
 
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+export const KIND_LABELS = {
+  thesis: 'PhD thesis',
+  conference: 'Conference paper',
+  workshop: 'Workshop paper',
+  journal: 'Journal article',
+  techreport: 'Technical report',
+  submission: 'Submission'
+};
+
 // Data files store absolute URLs (so hoak.me can use them too). When previewing
 // locally, rewrite this site's URLs to relative paths so new images show up
 // before they are pushed.
@@ -26,8 +37,9 @@ export function esc(s) {
 
 export function formatDate(iso) {
   // Parse YYYY-MM-DD as a local date so it doesn't shift a day in US timezones.
-  const [y, m, d] = iso.split('-').map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  const [y, m, d] = String(iso).split('-').map(Number);
+  if (!y || !m || !d) return esc(iso);
+  return `${d} ${MONTHS[m - 1]} ${y}`;
 }
 
 export function initials(name) {
@@ -44,10 +56,11 @@ function photoPositionStyle(person) {
 export function photoHTML(person, cls = 'person-photo') {
   const site = person.links?.website || '';
   const visual = person.photo
-    ? `<img class="${cls}" src="${esc(asset(person.photo))}" alt="${site ? '' : esc(person.name)}" loading="lazy"${photoPositionStyle(person)}>`
+    ? `<img class="${cls}" src="${esc(asset(person.photo))}" alt="${esc(person.name)}" loading="lazy"${photoPositionStyle(person)}>`
     : `<span class="${cls} person-photo-placeholder" aria-hidden="true">${esc(initials(person.name))}</span>`;
   if (!site) return visual;
-  return `<a class="person-photo-link" href="${esc(site)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(person.name)}'s website">${visual}</a>`;
+  // The website field is the photo's destination. Do not also print that URL as text.
+  return `<a class="person-photo-link" href="${esc(site)}">${visual}</a>`;
 }
 
 export const ROLE_LABELS = {
@@ -59,27 +72,71 @@ export const ROLE_LABELS = {
   visitor: 'Visiting Researcher'
 };
 
-const LINK_ICONS = {
-  paper: 'fa-solid fa-file-lines',
-  code: 'fa-brands fa-github',
-  dataset: 'fa-solid fa-database',
-  poster: 'fa-solid fa-image',
-  slides: 'fa-solid fa-file-powerpoint',
-  talk: 'fa-solid fa-video',
-  recording: 'fa-solid fa-video',
-  youtube: 'fa-brands fa-youtube',
-  blog: 'fa-brands fa-medium',
-  article: 'fa-solid fa-newspaper',
-  website: 'fa-solid fa-globe'
-};
-
-export function linkIcon(label) {
-  const l = label.toLowerCase();
-  const key = Object.keys(LINK_ICONS).find(k => l.includes(k));
-  return key ? LINK_ICONS[key] : 'fa-solid fa-link';
+export function roleLine(person) {
+  if (person.alumni) {
+    const base = `${ROLE_LABELS[person.role] || person.role}, ${person.alumni.years}`;
+    return person.alumni.now ? `${base} · Now ${person.alumni.now}` : base;
+  }
+  if (person.role === 'pi') return `PI · ${person.title || ROLE_LABELS.pi}`;
+  if (person.role === 'phd') return person.title || 'PhD Student';
+  return person.title || ROLE_LABELS[person.role] || person.role;
 }
 
-export function linkButtonHTML(link) {
-  return `<a class="btn-link-pill" href="${esc(asset(link.url))}" target="_blank" rel="noopener">` +
-    `<i class="${linkIcon(link.label)}"></i>${esc(link.label)}</a>`;
+// `show` is the display source of truth. An omitted flag hides work from
+// before 2026 and otherwise keeps the lab / research-example / non-submission rule.
+export function shownOnResearch(pub) {
+  if (pub.show === true) return true;
+  if (pub.show === false) return false;
+  return pub.year >= 2026 && (pub.lab === true || pub.research_example === true) && pub.group !== 'submission';
 }
+
+export function byYearThenSource(pubs) {
+  return pubs
+    .map((pub, index) => ({ pub, index }))
+    .sort((a, b) => b.pub.year - a.pub.year || a.index - b.index)
+    .map(item => item.pub);
+}
+
+export function labAuthorHTML(authors, people) {
+  let html = esc(authors);
+  const escapeRegExp = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  for (const person of people || []) {
+    const name = String(person.name || '').replace(/\s*\(.*?\)/g, '').trim();
+    if (!name) continue;
+    const re = new RegExp(`\\b${escapeRegExp(name)}\\b\\*?`, 'g');
+    html = html.replace(re, match => `<strong>${match}</strong>`);
+  }
+  return html;
+}
+
+export function pubLinksHTML(links) {
+  const items = (links || []).filter(link => link && link.label && link.url);
+  if (!items.length) return '';
+  const anchors = items.map(link =>
+    `<a href="${esc(asset(link.url))}">${esc(link.label)}</a>`
+  );
+  return `<p class="pub-links">${anchors.join('<span class="pub-dot" aria-hidden="true"> · </span>')}</p>`;
+}
+
+export function pubArticleHTML(pub, people) {
+  const kind = KIND_LABELS[pub.group] || pub.group || '';
+  const figure = pub.image ? `
+    <figure class="pub-fig">
+      <img src="${esc(asset(pub.image))}" alt="${esc(`Figure from ${pub.title}`)}" loading="lazy">
+      <figcaption>Figure from this work · ${esc(pub.venue)} (${esc(pub.year)})</figcaption>
+    </figure>` : '';
+  return `
+    <article class="pub${pub.image ? '' : ' nofig'}" id="${esc(pub.key)}">
+      <div class="pub-cite">
+        <p class="pub-tags"><span class="kind">${esc(kind)}</span><span class="year-tag">${esc(pub.year)}</span></p>
+        <h3 class="pub-title">${esc(pub.title)}</h3>
+        <p class="pub-authors">${labAuthorHTML(pub.authors, people)}</p>
+        ${pub.authornote ? `<p class="pub-authornote">${esc(pub.authornote)}</p>` : ''}
+        <p class="pub-venue">${esc(pub.venue)} · ${esc(pub.year)}</p>
+        ${pubLinksHTML(pub.links)}
+      </div>
+      ${figure}
+    </article>`;
+}
+
+export const HONESTY_NOTE = `<aside class="honesty-note"><strong>Layout preview note.</strong> List includes historical PI publications from site data for density and wrapping. Items with <code>show:false</code> on the live Research page are for layout preview only — not claimed as current IRIS Lab output.</aside>`;

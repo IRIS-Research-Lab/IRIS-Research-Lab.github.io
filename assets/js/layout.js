@@ -1,4 +1,4 @@
-// assets/js/layout.js — injects the shared navbar and footer, and highlights the current page.
+// assets/js/layout.js — injects the shared header and footer, and marks the current page.
 async function inject(id, url) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -20,6 +20,3 @@ document.querySelectorAll('.site-nav .nav-link').forEach(a => {
     a.setAttribute('aria-current', 'page');
   }
 });
-
-const year = document.getElementById('footer-year');
-if (year) year.textContent = new Date().getFullYear();

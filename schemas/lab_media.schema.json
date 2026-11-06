@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://iris-research-lab.github.io/schemas/lab_media.schema.json",
   "title": "IRIS Lab photos and videos",
-  "description": "Gallery items for Photos & fun on the Lab page. Order does not matter; the page sorts newest first. One object is one item.",
+  "description": "Lab media catalog. The People page shows one photo: the newest image. Other entries stay in this file and on disk and are not deleted. Order does not matter.",
   "type": "array",
   "items": {
     "type": "object",

@@ -5,8 +5,8 @@ Department of Computer Science, The University of Texas at Dallas.
 
 Live site: <https://iris-research-lab.github.io>
 
-Plain HTML, Bootstrap, and Font Awesome. News, people, publications, and research
-themes are edited in the private
+Plain HTML and CSS in the V3 North Star system (dark field, mint links, figure-and-citation
+publication rows). News, people, and publications are edited in the private
 [IRIS-Updates](https://github.com/IRIS-Research-Lab/IRIS-Updates) repository and copied
 into the site at build time. Lab photos and videos live here
 (`data/lab_media.json`, `assets/media/lab/`). Field details are in
