@@ -2,6 +2,13 @@
 // Lab media: show one photo. Other catalog entries stay on disk and are not deleted.
 import { loadJSON, esc, asset, photoHTML, roleLine, formatDate } from './common.js';
 
+function datesHTML(person) {
+  const start = typeof person.start === 'string' ? person.start.trim() : '';
+  const end = typeof person.end === 'string' ? person.end.trim() : '';
+  if (!start || !end) return '';
+  return `<p class="dates">${esc(start)} \u2013 ${esc(end)}</p>`;
+}
+
 function memberHTML(person) {
   const interests = (person.interests || []).filter(Boolean);
   return `
@@ -9,6 +16,7 @@ function memberHTML(person) {
       ${photoHTML(person)}
       <h2>${esc(person.name)}</h2>
       <p class="role">${esc(roleLine(person))}</p>
+      ${datesHTML(person)}
       ${interests.length ? `<p class="interests">${interests.map(item => esc(item)).join(' · ')}</p>` : ''}
     </li>`;
 }

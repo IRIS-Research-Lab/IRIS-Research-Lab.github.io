@@ -592,6 +592,19 @@ h1 {
   margin: 0 0 8px;
 }
 
+.member .role:has(+ .dates) {
+  margin-bottom: 2px;
+}
+
+.member .dates {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.35;
+  color: var(--iris-footer);
+  margin: 0 0 8px;
+}
+
 .member .interests {
   font-size: 13px;
   font-weight: 400;

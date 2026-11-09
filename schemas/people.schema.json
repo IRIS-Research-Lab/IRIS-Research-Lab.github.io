@@ -14,6 +14,16 @@
         "description": "pi, postdoc, phd, ms, undergrad, or visitor. For alumni, keep the role they held and add an 'alumni' object.",
         "enum": ["pi", "postdoc", "phd", "ms", "undergrad", "visitor"]
       },
+      "start": {
+        "description": "When a current student joined, as a term such as Fall 2026. Students only (phd, ms, undergrad). Pair with end. Omit both for faculty and alumni.",
+        "type": "string",
+        "pattern": "^(Spring|Summer|Fall|Winter) [0-9]{4}$"
+      },
+      "end": {
+        "description": "When that student leaves, as a term such as Spring 2030, or the exact string In progress. Pair with start.",
+        "type": "string",
+        "pattern": "^(In progress|(Spring|Summer|Fall|Winter) [0-9]{4})$"
+      },
       "title": { "description": "Optional custom subtitle shown under the name.", "type": "string" },
       "photo": {
         "description": "Absolute URL, normally https://iris-research-lab.github.io/assets/images/people/<id>.jpg (square-ish, ~600px).",
@@ -50,6 +60,21 @@
           "now": { "description": "e.g. 'Research Scientist at Google'", "type": "string" }
         }
       }
-    }
+    },
+    "dependentRequired": {
+      "start": ["end"],
+      "end": ["start"]
+    },
+    "allOf": [
+      {
+        "if": { "required": ["start"] },
+        "then": {
+          "properties": {
+            "role": { "enum": ["phd", "ms", "undergrad"] }
+          },
+          "not": { "required": ["alumni"] }
+        }
+      }
+    ]
   }
 }
