@@ -86,6 +86,8 @@ Add an object to `data/pubs.json` (order in the file doesn't matter; the site so
   "id": "jane-doe",
   "name": "Jane Doe",
   "role": "phd",
+  "start": "Fall 2026",
+  "end": "In progress",
   "photo": "https://iris-research-lab.github.io/assets/images/people/jane-doe.jpg",
   "interests": ["Adversarial robustness", "Vision models"],
   "links": {
@@ -99,6 +101,7 @@ Add an object to `data/pubs.json` (order in the file doesn't matter; the site so
 
 - **`id`**: `firstname-lastname`, lowercase. Must be unique.
 - **`role`**: `pi`, `postdoc`, `phd`, `ms`, `undergrad`, or `visitor`.
+- **`start` / `end`**: current students only (`phd`, `ms`, `undergrad`). `start` is a term such as `Fall 2026`. `end` is a term, or the exact string `In progress`. Omit both for faculty. When someone leaves, remove these and add `alumni` instead.
 - **`interests`**: up to 5 short phrases.
 - **`links`**: include only the ones you want. Also supported: `orcid`, `bluesky`, `twitter`. The People page does not show email addresses. A photo links to `links.website` when that field is set.
 - No photo yet? Leave out `photo` and your initials will be shown instead.
