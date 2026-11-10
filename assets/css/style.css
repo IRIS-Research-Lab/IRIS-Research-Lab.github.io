@@ -490,7 +490,7 @@ h1 {
 }
 
 .pub-fig figcaption,
-.lab-photo figcaption {
+.photo-grid figcaption {
   margin-top: 8px;
   font-family: var(--font-mono);
   font-size: 11px;
@@ -619,6 +619,7 @@ h1 {
   aspect-ratio: 1;
   margin: 0 0 12px;
   height: auto;
+  object-position: center 20%;
 }
 
 .member .person-photo-link,
@@ -639,24 +640,26 @@ h1 {
   box-shadow: inset 0 0 0 1px var(--iris-rule);
 }
 
-.lab-photo {
-  margin: 0 0 36px;
-}
-
-.lab-photo figure {
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--roster-cols), minmax(0, 1fr));
+  gap: var(--roster-gap);
+  list-style: none;
   margin: 0;
-  width: calc((100% - (var(--roster-cols) - 1) * var(--roster-gap)) / var(--roster-cols));
+  padding: 0;
 }
 
-.lab-photo picture { display: block; }
+.photo-grid figure { margin: 0; }
 
-.lab-photo img {
+.photo-grid picture { display: block; }
+
+.photo-grid img {
   width: 100%;
-  aspect-ratio: 1;
+  aspect-ratio: 4 / 3;
   height: auto;
   object-fit: cover;
+  object-position: center;
   display: block;
-  border-radius: 0;
 }
 
 .site-footer {

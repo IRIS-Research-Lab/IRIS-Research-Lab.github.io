@@ -131,8 +131,8 @@ Add an object to `data/news.json` (newest items appear first automatically):
 
 ## Add a lab photo or video
 
-Photos & fun on the People page (`/people/`) reads [`data/lab_media.json`](data/lab_media.json).
-The page shows **one** photo: the newest `type: "image"` entry. Other photos and any videos stay in the catalog and on disk; they are not deleted, and they are not shown. The section is omitted when the catalog has no image. Add an item as one object in that array.
+The Photos page (`/photos/`) reads [`data/lab_media.json`](data/lab_media.json).
+Every `type: "image"` entry is shown, newest first, in one grid. Videos stay in the catalog and on disk; they are not deleted, and they are not shown. The page says there are no photos when the catalog has no image. Add an item as one object in that array.
 
 Keep optimized photos under 2 MB and videos under 10 MB so the repo does not need Git LFS. The build rejects larger lab files. Do not commit camera originals; they carry GPS and other EXIF.
 
@@ -165,7 +165,7 @@ Paste the printed object into `data/lab_media.json`, replace `alt` with what a s
 
 ### Video
 
-Video entries can stay in the catalog. The People page does not play them; it shows one photo. Transcode to H.264 MP4 when you are keeping a clip on disk. with the moov atom at the front (`+faststart`), a reasonable bitrate, and a file under about 10 MB. Strip metadata so a phone clip does not keep its GPS. Then make a poster with the photo optimizer (that step also strips the poster's metadata).
+Video entries can stay in the catalog. The Photos page does not play them. Transcode to H.264 MP4 when you are keeping a clip on disk. with the moov atom at the front (`+faststart`), a reasonable bitrate, and a file under about 10 MB. Strip metadata so a phone clip does not keep its GPS. Then make a poster with the photo optimizer (that step also strips the poster's metadata).
 
 ```sh
 ffmpeg -y -i original.mov \
