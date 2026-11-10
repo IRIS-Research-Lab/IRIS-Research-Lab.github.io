@@ -1,6 +1,20 @@
 # PI feedback plan
 
-Planning only. This branch does not change the site. A later implementation needs two pull requests: one in this website repo, and one in [IRIS-Updates](https://github.com/IRIS-Research-Lab/IRIS-Updates) that only flips `show` flags.
+## Shipped decisions (10 Nov 2026)
+
+Charles approved this plan, then corrected the under-review papers. Where this note and the sections below disagree, this note is what the branch implements.
+
+- Home bio is the draft below, in one paragraph in `index.html`.
+- Join Us has no Google Form. The button is “Apply to UT Dallas” and goes to https://graduate-admissions.utdallas.edu/apply-to-ut-dallas/apply/ . The sentence is for prospective students generally.
+- Photos use the roster-cell CSS fix below.
+- Research lists 14 published, non-thesis papers. `show` is false on `hoak_thesis_2026`, `hoak_backdoors_2025`, and `abdullah_memorization_2023`. Year counts: 2025: 5, 2024: 3, 2023: 2, 2022: 3, 2021: 1.
+- Featured work is `hoak_synthetic_2025` (“On Synthetic Texture Datasets: Challenges, Creation, and Curation”). It is the first 2025 record in `pubs.json`. The page picks the newest year, then file order, and skips theses and submissions.
+
+The screenshots under `plan/screenshots/` labeled `live-today` are the site before these edits. The `preview` shots are the built site after them.
+
+# Original plan
+
+This branch started as a planning document. The write-up below is that plan.
 
 Captured 10 Nov 2026 from a local build of this branch (`python3 scripts/build.py --data-dir ../IRIS-Updates/data`) served at `http://127.0.0.1:8765`, viewport 1280×900, full-page screenshots. These are the live-today shots. Preview shots belong on the implementation PRs, after the pages change.
 

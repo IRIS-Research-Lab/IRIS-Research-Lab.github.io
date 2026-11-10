@@ -62,12 +62,13 @@ Add an object to `data/pubs.json` (order in the file doesn't matter; the site so
   are bolded. For equal contribution, add `*` after the names and `"authornote": "* indicates equal contribution"`.
 - **`group`**: `conference`, `journal`, `workshop`, `techreport`, `thesis`, or `submission`.
   Papers under review use `submission` and `"show": false`; switch the group once accepted.
+  A `thesis` stays in the file and is not listed on Research.
 - **`lab`**: `true` for work done in the IRIS Lab.
 - **`show`** (optional boolean): Research display flag and the source of truth. `true` lists the entry;
-  `false` hides it, including pre-2026 records that should remain in the file. When omitted, years before
-  2026 are hidden, and 2026 or later still require `lab` or `research_example` and a non-submission group.
+  `false` hides it. Year does not hide an entry. When omitted, a published group is listed and a
+  `submission` stays hidden. `group: thesis` is hidden even when `show` is true.
 - **`research_example`** (optional boolean): marks selected prior work as example content without changing
-  `lab` affiliation. Research lists it only when `show` says so.
+  `lab` affiliation. It does not by itself select papers for Research.
 - **`highlight`** (optional boolean): personal-site highlight selection, retained for hoak.me compatibility;
   it does not select papers for IRIS Research.
 - **`image`** (optional): a teaser figure, about 1200px wide, under 2 MiB (PNG/JPEG/WebP/GIF). Commit the file to

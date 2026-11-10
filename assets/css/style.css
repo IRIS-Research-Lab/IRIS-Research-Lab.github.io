@@ -121,6 +121,8 @@ a:focus-visible {
   flex-direction: column;
   min-height: 100vh;
   padding: 44px var(--space-gutter) 56px;
+  --roster-cols: 3;
+  --roster-gap: 28px;
 }
 
 /* Short pages: main absorbs leftover viewport space so the footer sits at the bottom.
@@ -384,26 +386,7 @@ h1 {
   font-weight: 600;
 }
 
-.honesty-note {
-  margin: 0 0 28px;
-  padding: 12px 14px;
-  border-left: 3px solid var(--iris-orange);
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--iris-muted);
-  max-width: 72ch;
-}
-
-.honesty-note strong {
-  color: var(--iris-ink-soft);
-  font-weight: 600;
-}
-
-.honesty-note code {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--iris-mint);
-}
+.pub-year + .pub-year { margin-top: 12px; }
 
 .pub-list {
   list-style: none;
@@ -567,8 +550,8 @@ h1 {
 
 .roster {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 28px;
+  grid-template-columns: repeat(var(--roster-cols), minmax(0, 1fr));
+  gap: var(--roster-gap);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -658,12 +641,20 @@ h1 {
 
 .lab-photo {
   margin: 0 0 36px;
-  max-width: 520px;
 }
+
+.lab-photo figure {
+  margin: 0;
+  width: calc((100% - (var(--roster-cols) - 1) * var(--roster-gap)) / var(--roster-cols));
+}
+
+.lab-photo picture { display: block; }
 
 .lab-photo img {
   width: 100%;
+  aspect-ratio: 1;
   height: auto;
+  object-fit: cover;
   display: block;
   border-radius: 0;
 }
@@ -691,7 +682,7 @@ h1 {
 }
 
 @media (max-width: 1199px) {
-  .roster { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .page { --roster-cols: 2; }
 }
 
 @media (max-width: 899px) {
@@ -712,10 +703,10 @@ h1 {
   .cta { flex-direction: column; align-items: flex-start; gap: 12px; }
   .featured-title { font-size: 22px; }
 
+  .page { --roster-cols: 1; }
+
   .lower { display: block; }
   .lower > section + section { margin-top: 36px; }
-
-  .roster { grid-template-columns: 1fr; }
 
   .pub {
     grid-template-columns: minmax(0, 1fr);
@@ -724,7 +715,6 @@ h1 {
   }
 
   .pub-title { font-size: 17px; }
-  .honesty-note { font-size: 13px; }
 
   .site-footer { flex-direction: column; }
 }

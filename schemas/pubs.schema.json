@@ -23,12 +23,12 @@
       "venue": { "description": "Full venue name with abbreviation, e.g. 'USENIX Security Symposium'.", "type": "string", "minLength": 1 },
       "year": { "type": "integer", "minimum": 2000, "maximum": 2100 },
       "group": {
-        "description": "Publication type. Under-review entries use submission and show:false so Research omits them.",
+        "description": "Publication type. thesis is never listed. Under-review entries use submission and show:false so Research omits them until show is set true.",
         "enum": ["conference", "journal", "workshop", "techreport", "thesis", "submission"]
       },
       "lab": { "description": "true for work done in the IRIS Lab. Prior work may be included separately as a research_example.", "type": "boolean" },
-      "show": { "description": "Research display flag and source of truth. true lists the entry; false hides it. When omitted, years before 2026 are hidden, and 2026 or later still require lab or research_example and a non-submission group.", "type": "boolean" },
-      "research_example": { "description": "Marks selected prior work as example content without changing lab affiliation. Research lists it only when show is true, or when show is omitted and year is 2026 or later.", "type": "boolean" },
+      "show": { "description": "Research display flag and source of truth. true lists the entry; false hides it. A thesis is never listed. When omitted, published groups are listed and submission stays hidden. Year is not a display rule.", "type": "boolean" },
+      "research_example": { "description": "Marks selected prior work as example content without changing lab affiliation. Research lists it only when show says so.", "type": "boolean" },
       "highlight": { "description": "Optional personal-site highlight selection, retained for hoak.me compatibility. Does not control IRIS Research visibility.", "type": "boolean" },
       "image": {
         "description": "Absolute URL of a teaser image, normally https://iris-research-lab.github.io/assets/images/publications/<file>.",
