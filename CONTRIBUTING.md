@@ -61,12 +61,14 @@ Add an object to `data/pubs.json` (order in the file doesn't matter; the site so
 - **`authors`**: full names joined with ` and `. Use the same spelling as `data/people.json` so lab members
   are bolded. For equal contribution, add `*` after the names and `"authornote": "* indicates equal contribution"`.
 - **`group`**: `conference`, `journal`, `workshop`, `techreport`, `thesis`, or `submission`.
-  Papers under review use `submission` and `"show": false`; switch the group once accepted.
+  Papers under review use `submission` and `"show_lab": false`; switch the group once accepted.
   A `thesis` stays in the file and is not listed on Research.
 - **`lab`**: `true` for work done in the IRIS Lab.
-- **`show`** (optional boolean): Research display flag and the source of truth. `true` lists the entry;
+- **`show_lab`** (optional boolean): lab-site display flag and the source of truth. `true` lists the entry;
   `false` hides it. Year does not hide an entry. When omitted, a published group is listed and a
-  `submission` stays hidden. `group: thesis` is hidden even when `show` is true.
+  `submission` stays hidden. `group: thesis` is hidden even when `show_lab` is true. A personal site
+  does not read this field.
+
 - **`research_example`** (optional boolean): marks selected prior work as example content without changing
   `lab` affiliation. It does not by itself select papers for Research.
 - **`highlight`** (optional boolean): personal-site highlight selection, retained for hoak.me compatibility;

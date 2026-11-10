@@ -84,12 +84,13 @@ export function roleLine(person) {
   return person.title || ROLE_LABELS[person.role] || person.role;
 }
 
-// `show` lists or hides an entry. A thesis is never listed. An omitted flag lists
-// published work and hides under-review submissions. Year is not a display rule.
+// `show_lab` lists or hides an entry on the lab site. A thesis is never listed.
+// An omitted flag lists published work and hides under-review submissions.
+// Year is not a display rule. The personal site does not read this field.
 export function shownOnResearch(pub) {
   if (pub.group === 'thesis') return false;
-  if (pub.show === false) return false;
-  if (pub.show === true) return true;
+  if (pub.show_lab === false) return false;
+  if (pub.show_lab === true) return true;
   return pub.group !== 'submission';
 }
 
