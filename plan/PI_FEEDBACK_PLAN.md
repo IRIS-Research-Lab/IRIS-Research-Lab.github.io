@@ -7,7 +7,7 @@ Charles approved this plan, then corrected the under-review papers. Where this n
 - Home bio is the draft below, in one paragraph in `index.html`.
 - Join Us has no Google Form. The button is “Apply to UT Dallas” and goes to https://graduate-admissions.utdallas.edu/apply-to-ut-dallas/apply/ . The sentence is for prospective students generally.
 - Photos use the roster-cell CSS fix below.
-- Research lists 14 published, non-thesis papers. `show_lab` is false on `hoak_thesis_2026`, `hoak_backdoors_2025`, and `abdullah_memorization_2023`. Year counts: 2025: 5, 2024: 3, 2023: 2, 2022: 3, 2021: 1. The lab-site field is `show_lab`. If `show_lab` is omitted, a thesis is still hidden, `submission` stays hidden, and any other group is listed.
+- Research lists 14 published, non-thesis papers. `show_lab` is false on `hoak_thesis_2026`, `hoak_backdoors_2025`, and `abdullah_memorization_2023`. Year counts: 2025: 5, 2024: 3, 2023: 2, 2022: 3, 2021: 1. The lab-site field is `show_lab`. If `show_lab` is omitted, a thesis is still hidden, `submission` stays hidden, and any other group is listed. `show` is a deprecated alias for that flag so the public snapshot from before the rename still validates. When both are set, `show_lab` wins.
 - Featured work is `hoak_synthetic_2025` (“On Synthetic Texture Datasets: Challenges, Creation, and Curation”). It is the first 2025 record in `pubs.json`. The page picks the newest year, then file order, and skips theses and submissions.
 
 The screenshots under `plan/screenshots/` labeled `live-today` are the site before these edits. The `preview` shots are the built site after them.

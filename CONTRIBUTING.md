@@ -67,7 +67,9 @@ Add an object to `data/pubs.json` (order in the file doesn't matter; the site so
 - **`show_lab`** (optional boolean): lab-site display flag and the source of truth. `true` lists the entry;
   `false` hides it. Year does not hide an entry. When omitted, a published group is listed and a
   `submission` stays hidden. `group: thesis` is hidden even when `show_lab` is true. A personal site
-  does not read this field.
+  does not read this field. **`show`** is a deprecated alias for the same flag, accepted so a snapshot
+  from before the rename still validates. When both are set, `show_lab` wins. New records set only
+  `show_lab`.
 
 - **`research_example`** (optional boolean): marks selected prior work as example content without changing
   `lab` affiliation. It does not by itself select papers for Research.

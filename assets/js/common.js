@@ -85,12 +85,16 @@ export function roleLine(person) {
 }
 
 // `show_lab` lists or hides an entry on the lab site. A thesis is never listed.
-// An omitted flag lists published work and hides under-review submissions.
-// Year is not a display rule. The personal site does not read this field.
+// `show` is a deprecated alias used by the public snapshot from before the rename.
+// When both are set, `show_lab` wins. An omitted flag lists published work and
+// hides under-review submissions. Year is not a display rule.
 export function shownOnResearch(pub) {
   if (pub.group === 'thesis') return false;
-  if (pub.show_lab === false) return false;
-  if (pub.show_lab === true) return true;
+  const flag = typeof pub.show_lab === 'boolean' ? pub.show_lab
+    : typeof pub.show === 'boolean' ? pub.show
+    : null;
+  if (flag === false) return false;
+  if (flag === true) return true;
   return pub.group !== 'submission';
 }
 
