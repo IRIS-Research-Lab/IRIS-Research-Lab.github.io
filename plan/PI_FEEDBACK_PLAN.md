@@ -232,10 +232,14 @@ CSS only, plus a check that the 1600×1200 attributes do not win over `aspect-ra
 
 1. Remove `.lab-photo { max-width: 520px }`.
 2. Zero the figure margin (`.lab-photo figure { margin: 0 }`).
-3. Give the figure the width of one roster cell. Share the column count and the 28px gap with `.roster` so the breakpoints cannot drift:
+3. Give the figure the width of one roster cell. `.lab-photo` is a sibling of the roster, not a child of it, so the column count and the 28px gap have to live on a shared ancestor. `.page` wraps both. `.roster` only reads the variables. It does not set them, or a `--roster-cols: 3` on `.roster` would beat the breakpoint overrides and the two frames would drift.
 
 ```css
-.roster { --roster-cols: 3; --roster-gap: 28px; }
+.page { --roster-cols: 3; --roster-gap: 28px; }
+.roster {
+  grid-template-columns: repeat(var(--roster-cols), minmax(0, 1fr));
+  gap: var(--roster-gap);
+}
 .lab-photo figure {
   margin: 0;
   width: calc((100% - (var(--roster-cols) - 1) * var(--roster-gap)) / var(--roster-cols));
@@ -246,9 +250,14 @@ CSS only, plus a check that the 1600×1200 attributes do not win over `aspect-ra
   height: auto;
   object-fit: cover;
 }
-```
 
-Set `--roster-cols: 2` at `max-width: 1199px` and `--roster-cols: 1` at `max-width: 899px`, on a parent both grids can see (`.page` or `main`), and use the same variables in `.roster`’s `grid-template-columns` and `gap`.
+@media (max-width: 1199px) {
+  .page { --roster-cols: 2; }
+}
+@media (max-width: 899px) {
+  .page { --roster-cols: 1; }
+}
+```
 
 `people.js` sets `width="1600" height="1200"` on the lab image. Those attributes produce the used aspect ratio `auto 1600 / 1200` today. The CSS `aspect-ratio: 1` should override them. If a check shows the box still 4:3, stop writing those attributes. Keep `width` and `height` in `lab_media.json`; they document the file.
 
