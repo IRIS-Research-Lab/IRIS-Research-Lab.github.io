@@ -56,7 +56,26 @@
 *::before,
 *::after { box-sizing: border-box; }
 
-html { color-scheme: dark; }
+html { color-scheme: light dark; }
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --iris-bg: #f7faf8;
+    --iris-ink: #14231b;
+    --iris-muted: #4e6357;
+    --iris-muted-2: #40594b;
+    --iris-ink-soft: #304c3c;
+    --iris-mint: #246345;
+    --iris-mint-hover: #174e34;
+    --iris-orange: #b25900;
+    --iris-rule: rgba(36, 99, 69, 0.22);
+    --iris-rule-strong: rgba(36, 99, 69, 0.35);
+    --iris-focus: #246345;
+    --iris-btn-ink: #f7faf8;
+    --iris-footer: #52675b;
+    --iris-btn-active: #1f583b;
+  }
+}
 
 body {
   margin: 0;
