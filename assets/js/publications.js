@@ -1,33 +1,34 @@
-// Research publications. `show` decides the live list. ?preview=historical is layout-only.
+// Research publications. `show_lab` decides the live list. Theses are never listed.
 import {
-  loadJSON, pubArticleHTML, shownOnResearch, byYearThenSource, HONESTY_NOTE
+  loadJSON, esc, pubArticleHTML, shownOnResearch, byYearThenSource
 } from './common.js';
 
 const container = document.getElementById('publications');
 if (!container) {
   // Loaded only where the list exists. Home does not mount this script.
 } else {
-  const note = document.getElementById('honesty-note');
-  const preview = new URLSearchParams(location.search).get('preview') === 'historical';
-
   try {
     const [pubs, people] = await Promise.all([loadJSON('pubs'), loadJSON('people')]);
-    const visible = preview
-      ? pubs.filter(pub => pub.group !== 'submission')
-      : pubs.filter(shownOnResearch);
-    const ordered = byYearThenSource(visible);
-    const historical = ordered.some(pub => !shownOnResearch(pub));
-
-    if (note) note.innerHTML = historical ? HONESTY_NOTE : '';
+    const ordered = byYearThenSource(pubs.filter(shownOnResearch));
 
     if (!ordered.length) {
       container.innerHTML = `
         <p class="empty">The IRIS Lab launched in Fall 2026, so check back soon.
           In the meantime, see Prof. Hoak's <a href="https://www.hoak.me/research/publications/">prior publications</a>.</p>`;
     } else {
-      container.innerHTML = `<ol class="pub-list">${ordered.map(pub =>
-        `<li>${pubArticleHTML(pub, people)}</li>`
-      ).join('')}</ol>`;
+      const groups = [];
+      for (const pub of ordered) {
+        const last = groups[groups.length - 1];
+        if (!last || last.year !== pub.year) groups.push({ year: pub.year, pubs: [pub] });
+        else last.pubs.push(pub);
+      }
+      container.innerHTML = groups.map(group => `
+        <section class="pub-year">
+          <h2 class="section-label">${esc(group.year)}</h2>
+          <ol class="pub-list">${group.pubs.map(pub =>
+            `<li>${pubArticleHTML(pub, people)}</li>`
+          ).join('')}</ol>
+        </section>`).join('');
     }
 
     function revealPaper() {

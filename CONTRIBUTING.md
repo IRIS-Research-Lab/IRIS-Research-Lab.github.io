@@ -61,13 +61,18 @@ Add an object to `data/pubs.json` (order in the file doesn't matter; the site so
 - **`authors`**: full names joined with ` and `. Use the same spelling as `data/people.json` so lab members
   are bolded. For equal contribution, add `*` after the names and `"authornote": "* indicates equal contribution"`.
 - **`group`**: `conference`, `journal`, `workshop`, `techreport`, `thesis`, or `submission`.
-  Papers under review use `submission` and `"show": false`; switch the group once accepted.
+  Papers under review use `submission` and `"show_lab": false`; switch the group once accepted.
+  A `thesis` stays in the file and is not listed on Research.
 - **`lab`**: `true` for work done in the IRIS Lab.
-- **`show`** (optional boolean): Research display flag and the source of truth. `true` lists the entry;
-  `false` hides it, including pre-2026 records that should remain in the file. When omitted, years before
-  2026 are hidden, and 2026 or later still require `lab` or `research_example` and a non-submission group.
+- **`show_lab`** (optional boolean): lab-site display flag and the source of truth. `true` lists the entry;
+  `false` hides it. Year does not hide an entry. When omitted, a published group is listed and a
+  `submission` stays hidden. `group: thesis` is hidden even when `show_lab` is true. A personal site
+  does not read this field. **`show`** is a deprecated alias for the same flag, accepted so a snapshot
+  from before the rename still validates. When both are set, `show_lab` wins. New records set only
+  `show_lab`.
+
 - **`research_example`** (optional boolean): marks selected prior work as example content without changing
-  `lab` affiliation. Research lists it only when `show` says so.
+  `lab` affiliation. It does not by itself select papers for Research.
 - **`highlight`** (optional boolean): personal-site highlight selection, retained for hoak.me compatibility;
   it does not select papers for IRIS Research.
 - **`image`** (optional): a teaser figure, about 1200px wide, under 2 MiB (PNG/JPEG/WebP/GIF). Commit the file to
@@ -126,8 +131,8 @@ Add an object to `data/news.json` (newest items appear first automatically):
 
 ## Add a lab photo or video
 
-Photos & fun on the People page (`/people/`) reads [`data/lab_media.json`](data/lab_media.json).
-The page shows **one** photo: the newest `type: "image"` entry. Other photos and any videos stay in the catalog and on disk; they are not deleted, and they are not shown. The section is omitted when the catalog has no image. Add an item as one object in that array.
+The Photos page (`/photos/`) reads [`data/lab_media.json`](data/lab_media.json).
+Every `type: "image"` entry is shown, newest first, in one grid. Videos stay in the catalog and on disk; they are not deleted, and they are not shown. The page says there are no photos when the catalog has no image. Add an item as one object in that array.
 
 Keep optimized photos under 2 MB and videos under 10 MB so the repo does not need Git LFS. The build rejects larger lab files. Do not commit camera originals; they carry GPS and other EXIF.
 
@@ -160,7 +165,7 @@ Paste the printed object into `data/lab_media.json`, replace `alt` with what a s
 
 ### Video
 
-Video entries can stay in the catalog. The People page does not play them; it shows one photo. Transcode to H.264 MP4 when you are keeping a clip on disk. with the moov atom at the front (`+faststart`), a reasonable bitrate, and a file under about 10 MB. Strip metadata so a phone clip does not keep its GPS. Then make a poster with the photo optimizer (that step also strips the poster's metadata).
+Video entries can stay in the catalog. The Photos page does not play them. Transcode to H.264 MP4 when you are keeping a clip on disk. with the moov atom at the front (`+faststart`), a reasonable bitrate, and a file under about 10 MB. Strip metadata so a phone clip does not keep its GPS. Then make a poster with the photo optimizer (that step also strips the poster's metadata).
 
 ```sh
 ffmpeg -y -i original.mov \

@@ -22,7 +22,7 @@ FILES = ("news.json", "people.json", "pubs.json", "research.json")
 LAB_MEDIA = "lab_media.json"
 MEDIA_PREFIX = "assets/images/publications/"
 MAX_MEDIA_BYTES = 2 * 1024 * 1024
-STATIC_DIRS = ("assets", "partials", "people", "publications", "research", "join", "schemas")
+STATIC_DIRS = ("assets", "partials", "people", "photos", "publications", "research", "join", "schemas")
 
 
 def download(url, token=None, raw=False, max_bytes=None):
