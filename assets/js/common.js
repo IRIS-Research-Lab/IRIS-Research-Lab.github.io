@@ -84,12 +84,18 @@ export function roleLine(person) {
   return person.title || ROLE_LABELS[person.role] || person.role;
 }
 
-// `show` is the display source of truth. An omitted flag hides work from
-// before 2026 and otherwise keeps the lab / research-example / non-submission rule.
+// `show_lab` lists or hides an entry on the lab site. A thesis is never listed.
+// `show` is a deprecated alias used by the public snapshot from before the rename.
+// When both are set, `show_lab` wins. An omitted flag lists published work and
+// hides under-review submissions. Year is not a display rule.
 export function shownOnResearch(pub) {
-  if (pub.show === true) return true;
-  if (pub.show === false) return false;
-  return pub.year >= 2026 && (pub.lab === true || pub.research_example === true) && pub.group !== 'submission';
+  if (pub.group === 'thesis') return false;
+  const flag = typeof pub.show_lab === 'boolean' ? pub.show_lab
+    : typeof pub.show === 'boolean' ? pub.show
+    : null;
+  if (flag === false) return false;
+  if (flag === true) return true;
+  return pub.group !== 'submission';
 }
 
 export function byYearThenSource(pubs) {
@@ -141,5 +147,3 @@ export function pubArticleHTML(pub, people) {
       ${figure}
     </article>`;
 }
-
-export const HONESTY_NOTE = `<aside class="honesty-note"><strong>Layout preview note.</strong> List includes historical PI publications from site data for density and wrapping. Items with <code>show:false</code> on the live Research page are for layout preview only — not claimed as current IRIS Lab output.</aside>`;

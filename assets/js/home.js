@@ -1,8 +1,8 @@
-// Home: mission is static. Featured work, figured preview, news, and people come from JSON.
+// Home: the group bio is static in index.html. Featured work, news, and people come from JSON.
 import {
   loadJSON, esc, formatDate, photoHTML, roleLine,
-  shownOnResearch, byYearThenSource, pubArticleHTML, pubLinksHTML,
-  labAuthorHTML, KIND_LABELS, HONESTY_NOTE
+  shownOnResearch, byYearThenSource, pubLinksHTML,
+  labAuthorHTML, KIND_LABELS
 } from './common.js';
 
 const [pubs, news, people] = await Promise.all([
@@ -10,24 +10,14 @@ const [pubs, news, people] = await Promise.all([
 ]);
 
 const currentPeople = people.filter(person => !person.alumni);
-const shown = pubs.filter(shownOnResearch);
-const featured = shown.find(pub => pub.research_example && pub.group === 'thesis')
-  || shown.find(pub => pub.research_example)
-  || shown.find(pub => pub.highlight)
-  || shown[0]
-  || null;
+// Newest published paper: year descending, then the order in pubs.json.
+const featured = byYearThenSource(
+  pubs.filter(pub => shownOnResearch(pub) && pub.group !== 'submission')
+)[0] || null;
 
 const root = document.getElementById('featured-root');
 if (root && featured) {
   const kind = KIND_LABELS[featured.group] || featured.group;
-  // Same switch as Research. Default home shows the featured show:true work only.
-  const preview = new URLSearchParams(location.search).get('preview') === 'historical';
-  const highlighted = pubs.filter(pub => pub.image && pub.group !== 'submission' && pub.highlight);
-  const withImage = highlighted.length
-    ? highlighted
-    : pubs.filter(pub => pub.image && pub.group !== 'submission');
-  const figured = preview ? byYearThenSource(withImage).slice(0, 3) : [];
-  const needsNote = figured.some(pub => !shownOnResearch(pub));
   root.innerHTML = `
     <section class="band" id="featured" aria-labelledby="featured-label">
       <h2 class="section-label" id="featured-label">Featured work</h2>
@@ -35,11 +25,6 @@ if (root && featured) {
       <h3 class="featured-title">${esc(featured.title)}</h3>
       <p class="featured-meta"><strong>${labAuthorHTML(featured.authors, people)}</strong><br>${esc(featured.venue)} · ${esc(featured.year)}</p>
       ${pubLinksHTML(featured.links)}
-      ${figured.length ? `
-        <h2 class="section-label spaced" id="figured-label">Works with figures <span class="layout-tag">(layout preview)</span></h2>
-        ${needsNote ? HONESTY_NOTE : ''}
-        <div aria-labelledby="figured-label">${figured.map(pub => pubArticleHTML(pub, people)).join('')}</div>
-      ` : ''}
     </section>`;
 }
 

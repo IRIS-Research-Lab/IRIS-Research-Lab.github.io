@@ -3,6 +3,8 @@ import base64
 import io
 import json
 from pathlib import Path
+import shutil
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -82,15 +84,55 @@ class MediaTests(unittest.TestCase):
         self.assertFalse(list(validator.iter_errors([pub])))
         pub['research_example'] = True
         pub['highlight'] = True
-        pub['show'] = True
+        pub['show_lab'] = True
         self.assertFalse(list(validator.iter_errors([pub])))
-        pub['show'] = False
+        pub['show_lab'] = False
         self.assertFalse(list(validator.iter_errors([pub])))
         pub['research_example'] = 'true'
         self.assertTrue(list(validator.iter_errors([pub])))
         pub['research_example'] = True
-        pub['show'] = 'false'
+        pub['show_lab'] = 'false'
         self.assertTrue(list(validator.iter_errors([pub])))
+
+    def test_legacy_show_is_a_boolean_alias_and_unknown_fields_stay_rejected(self):
+        schema = json.loads((build.ROOT / 'schemas/pubs.schema.json').read_text())
+        validator = Draft202012Validator(schema)
+        self.assertIs(schema['items']['additionalProperties'], False)
+        base = dict(key='sample_2026', title='Title', authors='Author', venue='Venue',
+                    year=2026, group='conference', lab=False)
+
+        only_show = dict(base, show=False)
+        self.assertFalse(list(validator.iter_errors([only_show])))
+        both = dict(base, show=True, show_lab=False)
+        self.assertFalse(list(validator.iter_errors([both])))
+        bad_show = dict(base, show='false')
+        self.assertTrue(list(validator.iter_errors([bad_show])))
+        unknown = dict(base, visible=True)
+        self.assertTrue(any('Additional properties' in e.message for e in validator.iter_errors([unknown])))
+
+        node = shutil.which('node')
+        self.assertIsNotNone(node)
+        script = """
+import { shownOnResearch } from './assets/js/common.js';
+const cases = [
+  [{ group: 'conference', show: false, show_lab: true }, true],
+  [{ group: 'conference', show: true, show_lab: false }, false],
+  [{ group: 'conference', show: true }, true],
+  [{ group: 'conference', show: false }, false],
+  [{ group: 'thesis', show: true }, false],
+  [{ group: 'submission', show: true }, true],
+  [{ group: 'conference' }, true],
+  [{ group: 'submission' }, false],
+];
+const bad = cases.filter(([pub, expected]) => shownOnResearch(pub) !== expected);
+if (bad.length) {
+  console.error(JSON.stringify(bad));
+  process.exit(1);
+}
+"""
+        run = subprocess.run([node, '--input-type=module', '-e', script],
+                             cwd=build.ROOT, capture_output=True, text=True)
+        self.assertEqual(run.returncode, 0, run.stderr)
 
 
 class MediaArtifactTests(test_build.ArtifactTests):

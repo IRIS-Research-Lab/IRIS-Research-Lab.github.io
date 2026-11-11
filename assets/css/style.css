@@ -121,6 +121,8 @@ a:focus-visible {
   flex-direction: column;
   min-height: 100vh;
   padding: 44px var(--space-gutter) 56px;
+  --roster-cols: 3;
+  --roster-gap: 28px;
 }
 
 /* Short pages: main absorbs leftover viewport space so the footer sits at the bottom.
@@ -384,26 +386,7 @@ h1 {
   font-weight: 600;
 }
 
-.honesty-note {
-  margin: 0 0 28px;
-  padding: 12px 14px;
-  border-left: 3px solid var(--iris-orange);
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--iris-muted);
-  max-width: 72ch;
-}
-
-.honesty-note strong {
-  color: var(--iris-ink-soft);
-  font-weight: 600;
-}
-
-.honesty-note code {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--iris-mint);
-}
+.pub-year + .pub-year { margin-top: 12px; }
 
 .pub-list {
   list-style: none;
@@ -507,7 +490,7 @@ h1 {
 }
 
 .pub-fig figcaption,
-.lab-photo figcaption {
+.photo-grid figcaption {
   margin-top: 8px;
   font-family: var(--font-mono);
   font-size: 11px;
@@ -567,8 +550,8 @@ h1 {
 
 .roster {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 28px;
+  grid-template-columns: repeat(var(--roster-cols), minmax(0, 1fr));
+  gap: var(--roster-gap);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -636,6 +619,7 @@ h1 {
   aspect-ratio: 1;
   margin: 0 0 12px;
   height: auto;
+  object-position: center 20%;
 }
 
 .member .person-photo-link,
@@ -656,16 +640,26 @@ h1 {
   box-shadow: inset 0 0 0 1px var(--iris-rule);
 }
 
-.lab-photo {
-  margin: 0 0 36px;
-  max-width: 520px;
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--roster-cols), minmax(0, 1fr));
+  gap: var(--roster-gap);
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-.lab-photo img {
+.photo-grid figure { margin: 0; }
+
+.photo-grid picture { display: block; }
+
+.photo-grid img {
   width: 100%;
+  aspect-ratio: 4 / 3;
   height: auto;
+  object-fit: cover;
+  object-position: center;
   display: block;
-  border-radius: 0;
 }
 
 .site-footer {
@@ -691,7 +685,7 @@ h1 {
 }
 
 @media (max-width: 1199px) {
-  .roster { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .page { --roster-cols: 2; }
 }
 
 @media (max-width: 899px) {
@@ -712,10 +706,10 @@ h1 {
   .cta { flex-direction: column; align-items: flex-start; gap: 12px; }
   .featured-title { font-size: 22px; }
 
+  .page { --roster-cols: 1; }
+
   .lower { display: block; }
   .lower > section + section { margin-top: 36px; }
-
-  .roster { grid-template-columns: 1fr; }
 
   .pub {
     grid-template-columns: minmax(0, 1fr);
@@ -724,7 +718,6 @@ h1 {
   }
 
   .pub-title { font-size: 17px; }
-  .honesty-note { font-size: 13px; }
 
   .site-footer { flex-direction: column; }
 }
