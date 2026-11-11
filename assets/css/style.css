@@ -60,19 +60,19 @@ html { color-scheme: light dark; }
 
 @media (prefers-color-scheme: light) {
   :root {
-    --iris-bg: #f7faf8;
-    --iris-ink: #14231b;
-    --iris-muted: #4e6357;
-    --iris-muted-2: #40594b;
-    --iris-ink-soft: #304c3c;
+    --iris-bg: #f9f9f9;
+    --iris-ink: #202020;
+    --iris-muted: #5e5e5e;
+    --iris-muted-2: #535353;
+    --iris-ink-soft: #464646;
     --iris-mint: #246345;
     --iris-mint-hover: #174e34;
     --iris-orange: #b25900;
-    --iris-rule: rgba(36, 99, 69, 0.22);
-    --iris-rule-strong: rgba(36, 99, 69, 0.35);
+    --iris-rule: rgba(89, 89, 89, 0.22);
+    --iris-rule-strong: rgba(89, 89, 89, 0.35);
     --iris-focus: #246345;
-    --iris-btn-ink: #f7faf8;
-    --iris-footer: #52675b;
+    --iris-btn-ink: #f9f9f9;
+    --iris-footer: #626262;
     --iris-btn-active: #1f583b;
   }
 }
