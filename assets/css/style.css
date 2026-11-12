@@ -1,6 +1,6 @@
 /* IRIS Lab V3 North Star
    Tokens ported from the design package (tokens/tokens.css).
-   Self-hosted Geist for UI text, Source Serif 4 for the Home hero title. */
+   Self-hosted Geist throughout. */
 
 @font-face {
   font-family: "Geist";
@@ -16,14 +16,6 @@
   font-weight: 100 900;
   font-display: swap;
   src: url("../fonts/geist-mono-latin-wght-normal.woff2") format("woff2");
-}
-
-@font-face {
-  font-family: "Source Serif 4";
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url("../fonts/source-serif-4-latin-700-normal.woff2") format("woff2");
 }
 
 :root {
@@ -43,12 +35,10 @@
   --iris-btn-active: #7bb396;
 
   --font-sans: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-serif: "Source Serif 4", "Source Serif Pro", Georgia, serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --content-width: min(948px, calc(50vw + 308px));
-  --space-gutter: 72px;
-  --space-gutter-mobile: 18px;
+  --old-gutter: 72px;
+  --min-gutter: 18px;
   --focus-ring: 2px solid var(--iris-focus);
   --focus-offset: 2px;
 }
@@ -140,10 +130,15 @@ a:focus-visible {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  /* Border-box width includes both gutters; the inner column is capped at 948px. */
-  width: min(100%, calc(var(--content-width) + 2 * var(--space-gutter)));
+  /* With available width A, the old column was min(A - 2g, 948px, A/2 + 308px).
+     Half its side gaps gives min(A - g, A/2 + 474px, 3A/4 + 154px).
+     Percentages use available width, excluding a classic scrollbar. Keep at least
+     18px on each side and cap at the exact 3840px result above that viewport.
+     No inline padding: this border-box width is also the usable content width. */
+  width: min(calc(100% - 2 * var(--min-gutter)), calc(100% - var(--old-gutter)), calc(50% + 474px), calc(75% + 154px));
+  max-width: 2394px;
   margin-inline: auto;
-  padding: 44px var(--space-gutter) 56px;
+  padding: 44px 0 56px;
   --roster-cols: 3;
   --roster-gap: 28px;
 }
@@ -266,10 +261,10 @@ h1 {
   margin: 0 0 16px;
 }
 
-.hero { max-width: 820px; margin-bottom: 44px; }
+.hero { margin-bottom: 44px; }
 
 .hero h1 {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-weight: 700;
   font-size: 52px;
   line-height: 1.05;
@@ -289,7 +284,6 @@ h1 {
   font-weight: 500;
   line-height: 1.45;
   color: var(--iris-mint);
-  max-width: 34ch;
   margin: 0 0 18px;
 }
 
@@ -297,7 +291,6 @@ h1 {
   font-size: 17px;
   line-height: 1.65;
   color: var(--iris-muted-2);
-  max-width: 52ch;
   margin: 0;
 }
 
@@ -306,7 +299,6 @@ h1 {
   font-size: 16px;
   line-height: 1.55;
   color: var(--iris-muted);
-  max-width: 48ch;
   margin: 0;
 }
 
@@ -320,14 +312,12 @@ h1 {
   text-transform: uppercase;
   color: var(--iris-orange);
   margin: 0 0 14px;
-  max-width: none;
 }
 
 .prose {
   font-size: 16px;
   line-height: 1.65;
   color: var(--iris-muted-2);
-  max-width: 48ch;
 }
 
 .prose p { margin: 0 0 14px; }
@@ -395,7 +385,6 @@ h1 {
   font-weight: 700;
   line-height: 1.25;
   color: var(--iris-ink);
-  max-width: 24ch;
   margin: 10px 0 12px;
 }
 
@@ -464,7 +453,6 @@ h1 {
   line-height: 1.3;
   letter-spacing: -0.015em;
   color: var(--iris-ink);
-  max-width: 48ch;
   margin: 0 0 8px;
   overflow-wrap: break-word;
 }
@@ -473,7 +461,6 @@ h1 {
   font-size: 14px;
   line-height: 1.5;
   color: var(--iris-ink-soft);
-  max-width: 60ch;
   margin: 0 0 6px;
 }
 
@@ -636,8 +623,7 @@ h1 {
 .member img,
 .member .person-photo-link,
 .member .person-photo-placeholder {
-  width: 150px;
-  max-width: 100%;
+  width: 100%;
   aspect-ratio: 1;
   margin: 0 0 12px;
   height: auto;
@@ -646,6 +632,8 @@ h1 {
 
 .member .person-photo-link,
 .person .person-photo-link { display: block; }
+
+.member .person-photo-link img { margin-bottom: 0; }
 
 .person-photo-link:hover,
 .person-photo-link:focus-visible { text-decoration: none; }
@@ -664,8 +652,7 @@ h1 {
 
 .photo-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 145px);
-  justify-content: start;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: var(--roster-gap);
   list-style: none;
   margin: 0;
@@ -704,14 +691,13 @@ h1 {
   font-size: 16px;
   line-height: 1.65;
   color: var(--iris-muted-2);
-  max-width: 48ch;
 }
 
 @media (max-width: 899px) {
   .page {
-    --space-gutter: var(--space-gutter-mobile);
+    --old-gutter: var(--min-gutter);
     --roster-cols: 2;
-    padding: 32px var(--space-gutter) 40px;
+    padding: 32px 0 40px;
   }
 
   .site-nav {
