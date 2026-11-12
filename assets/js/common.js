@@ -151,7 +151,7 @@ export function pubFigureHTML(pub) {
   return pub.image ? `
     <figure class="pub-fig">
       <img src="${esc(asset(pub.image))}" alt="${esc(`Figure from ${pub.title}`)}" loading="lazy">
-      <figcaption>Figure from this work: ${displayText(pub.venue)} (${displayText(pub.year)})</figcaption>
+      <figcaption>${displayText(pub.venue)} (${displayText(pub.year)})</figcaption>
     </figure>` : '';
 }
 

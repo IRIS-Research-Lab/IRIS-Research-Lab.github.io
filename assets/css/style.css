@@ -46,7 +46,9 @@
   --font-serif: "Source Serif 4", Georgia, serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Shared type scale: the root grows from 17px on phones to 24px at 4K. */
+  /* Fixed desktop reference: 16px is ~80% of the prior 19.878px root at
+     1920px. Keep these rem ratios (including the serif Home title); only the
+     existing heading step below 900px reduces type on smaller screens. */
   --text-xs: 0.8125rem;
   --text-sm: 0.9375rem;
   --text-nav: 0.875rem;
@@ -73,7 +75,7 @@
 
 html {
   color-scheme: light dark;
-  font-size: clamp(17px, calc(15.75px + 0.215vw), 24px);
+  font-size: 16px;
 }
 
 @media (prefers-color-scheme: light) {
@@ -557,6 +559,8 @@ h1 {
   line-height: 1.5;
   color: var(--iris-footer);
 }
+
+.pub-fig figcaption { text-align: center; }
 
 .home-sections {
   display: grid;

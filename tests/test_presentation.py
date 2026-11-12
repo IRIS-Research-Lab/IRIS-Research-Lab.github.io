@@ -102,7 +102,7 @@ process.stdout.write(JSON.stringify({hosts, unchanged: before === JSON.stringify
         self.assertEqual(len(research.figures), 2)
         self.assertEqual(home.figures[0], research.figures[0])
         self.assertEqual(home.figures[0]["caption"],
-                         "Figure from this work: European Conference on Artificial Intelligence (ECAI) (2025)")
+                         "European Conference on Artificial Intelligence (ECAI) (2025)")
         self.assertEqual(home.images[0]["src"], "/assets/images/publications/fig·1.webp")
         self.assertEqual(home.images[0]["alt"], "Figure from " + chosen["title"])
         self.assertIn("<strong>Blaine Hoak</strong>", result["hosts"]["publications"]["innerHTML"])
