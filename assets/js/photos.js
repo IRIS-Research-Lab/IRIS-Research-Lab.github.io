@@ -1,11 +1,11 @@
 // Lab photos from data/lab_media.json. Every image is shown. Videos stay in the catalog.
-import { loadJSON, esc, asset, formatDate } from './common.js';
+import { loadJSON, esc, displayText, asset, formatDate } from './common.js';
 
 function caption(item) {
   const parts = [];
   if (item.caption) parts.push(item.caption);
   if (item.date) parts.push(formatDate(item.date));
-  return parts.join(' · ');
+  return parts.join(', ');
 }
 
 function figure(item) {
@@ -15,7 +15,7 @@ function figure(item) {
     ? `<picture><source srcset="${esc(asset(item.src))}" type="image/webp"><img src="${esc(asset(item.fallback))}" alt="${esc(item.alt)}"${size} loading="lazy" decoding="async"></picture>`
     : `<img src="${esc(asset(item.src))}" alt="${esc(item.alt)}"${size} loading="lazy" decoding="async">`;
   const line = caption(item);
-  return `<li><figure>${img}${line ? `<figcaption>${esc(line)}</figcaption>` : ''}</figure></li>`;
+  return `<li><figure>${img}${line ? `<figcaption>${displayText(line)}</figcaption>` : ''}</figure></li>`;
 }
 
 const host = document.getElementById('photos');

@@ -1,12 +1,12 @@
 // People roster from data/people.json. Photos use each person's website field.
 // Lab photos live on /photos/.
-import { loadJSON, esc, photoHTML, roleLine } from './common.js';
+import { loadJSON, esc, displayText, photoHTML, roleLine } from './common.js';
 
 function datesHTML(person) {
   const start = typeof person.start === 'string' ? person.start.trim() : '';
   const end = typeof person.end === 'string' ? person.end.trim() : '';
   if (!start || !end) return '';
-  return `<p class="dates">${esc(start)} \u2013 ${esc(end)}</p>`;
+  return `<p class="dates">${displayText(start)} \u2013 ${displayText(end)}</p>`;
 }
 
 function memberHTML(person) {
@@ -14,10 +14,10 @@ function memberHTML(person) {
   return `
     <li class="member" id="${esc(person.id)}">
       ${photoHTML(person)}
-      <h2>${esc(person.name)}</h2>
-      <p class="role">${esc(roleLine(person))}</p>
+      <h2>${displayText(person.name)}</h2>
+      <p class="role">${displayText(roleLine(person))}</p>
       ${datesHTML(person)}
-      ${interests.length ? `<p class="interests">${interests.map(item => esc(item)).join(' · ')}</p>` : ''}
+      ${interests.length ? `<p class="interests">${interests.map(item => displayText(item)).join('; ')}</p>` : ''}
     </li>`;
 }
 

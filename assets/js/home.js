@@ -1,8 +1,8 @@
 // Home: the group bio is static in index.html. Featured work, news, and people come from JSON.
 import {
-  loadJSON, esc, formatDate, photoHTML, roleLine,
+  loadJSON, esc, displayText, normalizeTextSeparators, formatDate, photoHTML, roleLine,
   shownOnResearch, byYearThenSource, pubLinksHTML,
-  labAuthorHTML, KIND_LABELS
+  labAuthorHTML, pubFigureHTML, KIND_LABELS
 } from './common.js';
 
 const [pubs, news, people] = await Promise.all([
@@ -21,10 +21,15 @@ if (root && featured) {
   root.innerHTML = `
     <section class="band" id="featured" aria-labelledby="featured-label">
       <h2 class="section-label" id="featured-label">Featured work</h2>
-      <p class="kicker featured-kicker">${esc(kind)} · ${esc(featured.year)}</p>
-      <h3 class="featured-title">${esc(featured.title)}</h3>
-      <p class="featured-meta"><strong>${labAuthorHTML(featured.authors, people)}</strong><br>${esc(featured.venue)} · ${esc(featured.year)}</p>
-      ${pubLinksHTML(featured.links)}
+      <div class="pub featured-work${featured.image ? '' : ' nofig'}">
+        <div class="pub-cite">
+          <p class="kicker featured-kicker">${displayText(kind)}, ${displayText(featured.year)}</p>
+          <h3 class="featured-title">${displayText(featured.title)}</h3>
+          <p class="featured-meta"><strong>${labAuthorHTML(featured.authors, people)}</strong><br>${displayText(featured.venue)} (${displayText(featured.year)})</p>
+          ${pubLinksHTML(featured.links)}
+        </div>
+        ${pubFigureHTML(featured)}
+      </div>
     </section>`;
 }
 
@@ -39,6 +44,7 @@ if (newsSection && newsList && newsItems.length) {
       <time datetime="${esc(item.date)}">${formatDate(item.date)}</time>
       <p class="news-body">${item.text}</p>
     </article>`).join('');
+  normalizeTextSeparators(newsList);
 }
 
 const members = document.getElementById('members');
@@ -47,8 +53,8 @@ if (members) {
     <div class="person" id="home-${esc(person.id)}">
       ${photoHTML(person, 'person-photo')}
       <div>
-        <h3>${esc(person.name)}</h3>
-        <div class="role">${esc(roleLine(person))}</div>
+        <h3>${displayText(person.name)}</h3>
+        <div class="role">${displayText(roleLine(person))}</div>
       </div>
     </div>`).join('');
 }

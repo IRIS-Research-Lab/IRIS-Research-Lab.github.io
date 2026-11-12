@@ -35,10 +35,30 @@ export function esc(s) {
   })[c]);
 }
 
+// Normalize visible prose only. Attributes (especially URLs and alt text) still use
+// esc(), so presentation punctuation never changes data or link destinations.
+export function presentationText(value) {
+  return String(value ?? '').replace(/\s*[\u00b7\u2022\u2027\u2219\u22c5\u25cf\u25e6\u30fb]\s*/g, ', ');
+}
+
+export function displayText(value) {
+  return esc(presentationText(value));
+}
+
+// News may contain reviewed HTML. Walk text nodes after parsing so entities are
+// normalized too, while href, alt, and other attributes remain exactly intact.
+export function normalizeTextSeparators(root) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let node;
+  while ((node = walker.nextNode())) {
+    node.textContent = presentationText(node.textContent);
+  }
+}
+
 export function formatDate(iso) {
   // Parse YYYY-MM-DD as a local date so it doesn't shift a day in US timezones.
   const [y, m, d] = String(iso).split('-').map(Number);
-  if (!y || !m || !d) return esc(iso);
+  if (!y || !m || !d) return displayText(iso);
   return `${d} ${MONTHS[m - 1]} ${y}`;
 }
 
@@ -77,9 +97,9 @@ export const ROLE_LABELS = {
 export function roleLine(person) {
   if (person.alumni) {
     const base = `${ROLE_LABELS[person.role] || person.role}, ${person.alumni.years}`;
-    return person.alumni.now ? `${base} · Now ${person.alumni.now}` : base;
+    return person.alumni.now ? `${base}; Now ${person.alumni.now}` : base;
   }
-  if (person.role === 'pi') return `PI · ${person.title || ROLE_LABELS.pi}`;
+  if (person.role === 'pi') return `PI, ${person.title || ROLE_LABELS.pi}`;
   if (person.role === 'phd') return person.title || 'PhD Student';
   return person.title || ROLE_LABELS[person.role] || person.role;
 }
@@ -106,13 +126,13 @@ export function byYearThenSource(pubs) {
 }
 
 export function labAuthorHTML(authors, people) {
-  let html = esc(authors);
+  let html = displayText(authors);
   const escapeRegExp = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   for (const person of people || []) {
     const name = String(person.name || '').replace(/\s*\(.*?\)/g, '').trim();
     if (!name) continue;
     // Match the escaped author string, so names with ', &, or < still bold.
-    const re = new RegExp(`\\b${escapeRegExp(esc(name))}\\b\\*?`, 'g');
+    const re = new RegExp(`\\b${escapeRegExp(displayText(name))}\\b\\*?`, 'g');
     html = html.replace(re, match => `<strong>${match}</strong>`);
   }
   return html;
@@ -122,28 +142,31 @@ export function pubLinksHTML(links) {
   const items = (links || []).filter(link => link && link.label && link.url);
   if (!items.length) return '';
   const anchors = items.map(link =>
-    `<a href="${esc(asset(link.url))}">${esc(link.label)}</a>`
+    `<a href="${esc(asset(link.url))}">${displayText(link.label)}</a>`
   );
-  return `<p class="pub-links">${anchors.join('<span class="pub-dot" aria-hidden="true"> · </span>')}</p>`;
+  return `<p class="pub-links">${anchors.join(' ')}</p>`;
+}
+
+export function pubFigureHTML(pub) {
+  return pub.image ? `
+    <figure class="pub-fig">
+      <img src="${esc(asset(pub.image))}" alt="${esc(`Figure from ${pub.title}`)}" loading="lazy">
+      <figcaption>Figure from this work: ${displayText(pub.venue)} (${displayText(pub.year)})</figcaption>
+    </figure>` : '';
 }
 
 export function pubArticleHTML(pub, people) {
   const kind = KIND_LABELS[pub.group] || pub.group || '';
-  const figure = pub.image ? `
-    <figure class="pub-fig">
-      <img src="${esc(asset(pub.image))}" alt="${esc(`Figure from ${pub.title}`)}" loading="lazy">
-      <figcaption>Figure from this work · ${esc(pub.venue)} (${esc(pub.year)})</figcaption>
-    </figure>` : '';
   return `
     <article class="pub${pub.image ? '' : ' nofig'}" id="${esc(pub.key)}">
       <div class="pub-cite">
-        <p class="pub-tags"><span class="kind">${esc(kind)}</span><span class="year-tag">${esc(pub.year)}</span></p>
-        <h3 class="pub-title">${esc(pub.title)}</h3>
+        <p class="pub-tags"><span class="kind">${displayText(kind)}</span><span class="year-tag">${displayText(pub.year)}</span></p>
+        <h3 class="pub-title">${displayText(pub.title)}</h3>
         <p class="pub-authors">${labAuthorHTML(pub.authors, people)}</p>
-        ${pub.authornote ? `<p class="pub-authornote">${esc(pub.authornote)}</p>` : ''}
-        <p class="pub-venue">${esc(pub.venue)} · ${esc(pub.year)}</p>
+        ${pub.authornote ? `<p class="pub-authornote">${displayText(pub.authornote)}</p>` : ''}
+        <p class="pub-venue">${displayText(pub.venue)} (${displayText(pub.year)})</p>
         ${pubLinksHTML(pub.links)}
       </div>
-      ${figure}
+      ${pubFigureHTML(pub)}
     </article>`;
 }
