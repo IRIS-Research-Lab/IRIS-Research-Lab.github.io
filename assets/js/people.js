@@ -10,28 +10,39 @@ function datesHTML(person) {
 }
 
 function memberHTML(person) {
-  const interests = (person.interests || []).filter(Boolean);
   return `
     <li class="member" id="${esc(person.id)}">
       ${photoHTML(person)}
-      <h2>${displayText(person.name)}</h2>
+      <h3>${displayText(person.name)}</h3>
       <p class="role">${displayText(roleLine(person))}</p>
       ${datesHTML(person)}
-      ${interests.length ? `<p class="interests">${interests.map(item => displayText(item)).join('; ')}</p>` : ''}
     </li>`;
 }
 
-function roster(people) {
+// Section order on the page. Groups with no members are skipped, so a new
+// section (e.g. Master's Students) appears as soon as someone has that role.
+const GROUPS = [
+  { label: 'Principal Investigator', match: p => !p.alumni && p.role === 'pi' },
+  { label: 'Postdoctoral Researchers', match: p => !p.alumni && p.role === 'postdoc' },
+  { label: 'PhD Students', match: p => !p.alumni && p.role === 'phd' },
+  { label: "Master's Students", match: p => !p.alumni && p.role === 'ms' },
+  { label: 'Undergraduate Researchers', match: p => !p.alumni && p.role === 'undergrad' },
+  { label: 'Visiting Researchers', match: p => !p.alumni && p.role === 'visitor' },
+  { label: 'Alumni', match: p => Boolean(p.alumni) }
+];
+
+function section({ label }, people) {
   if (!people.length) return '';
-  return `<ul class="roster">${people.map(memberHTML).join('')}</ul>`;
+  return `
+    <section class="roster-group">
+      <h2 class="section-label">${esc(label)}</h2>
+      <ul class="roster">${people.map(memberHTML).join('')}</ul>
+    </section>`;
 }
 
 const people = await loadJSON('people');
-const current = people.filter(person => !person.alumni);
-const alumni = people.filter(person => person.alumni);
-const host = document.getElementById('people');
-host.innerHTML = roster(current) + (alumni.length
-  ? `<h2 class="section-label">Alumni</h2>${roster(alumni)}`
-  : '');
+document.getElementById('people').innerHTML = GROUPS
+  .map(group => section(group, people.filter(group.match)))
+  .join('');
 
 if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();

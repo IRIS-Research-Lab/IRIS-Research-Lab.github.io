@@ -621,9 +621,9 @@ h1 {
   padding: 0;
 }
 
-.roster + .section-label { margin-top: 36px; }
+.roster-group + .roster-group { margin-top: 36px; }
 
-.member h2 {
+.member h3 {
   font-size: var(--text-lg);
   font-weight: 600;
   line-height: 1.25;
@@ -650,14 +650,6 @@ h1 {
   line-height: 1.35;
   color: var(--iris-footer);
   margin: 0 0 8px;
-}
-
-.member .interests {
-  font-size: var(--text-sm);
-  font-weight: 400;
-  line-height: 1.45;
-  color: var(--iris-muted);
-  margin: 0;
 }
 
 .person-photo,

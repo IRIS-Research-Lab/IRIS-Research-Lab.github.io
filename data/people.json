@@ -5,7 +5,6 @@
     "role": "pi",
     "title": "Assistant Professor, Computer Science",
     "photo": "https://iris-research-lab.github.io/assets/images/people/blaine-hoak.jpg",
-    "interests": ["Trustworthy AI/ML", "Adversarial robustness", "Human vs. model vision"],
     "links": {
       "website": "https://hoak.me",
       "email": "Blaine.Hoak@UTDallas.edu",
@@ -21,7 +20,6 @@
     "start": "Fall 2026",
     "end": "In progress",
     "photo": "https://iris-research-lab.github.io/assets/images/people/abhirup-mukherjee.jpg",
-    "interests": ["Adversarial machine learning", "Computer security", "Interpretable and robust AI"],
     "links": {
       "website": "https://themukherjee.com",
       "email": "abhirup.mukherjee@utdallas.edu",
@@ -38,7 +36,6 @@
     "end": "In progress",
     "photo": "https://iris-research-lab.github.io/assets/images/people/charles-dardaman.jpg",
     "photoPosition": "center top",
-    "interests": ["Adversarial machine learning", "Uncertainty quantification", "Reinforcement learning"],
     "links": {
       "website": "https://charles.dardaman.com",
       "scholar": "https://scholar.google.com/citations?user=aH2FLPsAAAAJ",
