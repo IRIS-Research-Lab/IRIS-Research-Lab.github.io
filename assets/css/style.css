@@ -46,9 +46,9 @@
   --font-serif: "Source Serif 4", Georgia, serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Fixed desktop reference: 16px is ~80% of the prior 19.878px root at
-     1920px. Keep these rem ratios (including the serif Home title); only the
-     existing heading step below 900px reduces type on smaller screens. */
+  /* Fixed type: 17px grows the round 4 reference by 6.25% at every viewport.
+     Keep the rem hierarchy; only the existing heading step below 900px
+     reduces type on smaller screens. */
   --text-xs: 0.8125rem;
   --text-sm: 0.9375rem;
   --text-nav: 0.875rem;
@@ -58,13 +58,14 @@
   --text-page: 2.5rem;
   --text-hero: 3.25rem;
 
-  /* Reference images occupy about 15% of the desktop viewport, independently
-     of the wider text columns. Below 900px, use modest responsive thumbnails. */
-  --portrait-size: clamp(180px, 15vw, 576px);
+  /* Match People cards and text to the 288px portrait from the 1920px
+     reference. Gallery thumbnails keep their independent responsive sizing. */
+  --portrait-size: 288px;
   --photo-thumb-size: clamp(180px, 14.5vw, 560px);
 
   --old-gutter: 72px;
   --min-gutter: 18px;
+  --page-inset: 12px;
   --focus-ring: 2px solid var(--iris-focus);
   --focus-offset: 2px;
 }
@@ -75,7 +76,7 @@
 
 html {
   color-scheme: light dark;
-  font-size: 16px;
+  font-size: 17px;
 }
 
 @media (prefers-color-scheme: light) {
@@ -163,9 +164,11 @@ a:focus-visible {
      Half its side gaps gives min(A - g, A/2 + 474px, 3A/4 + 154px).
      Percentages use available width, excluding a classic scrollbar. Keep at least
      18px on each side and cap at the exact 3840px result above that viewport.
+     Round 5 insets that shell by 12px per desktop side, including its cap.
+     Keep geometry in px so the larger rem type cannot expand the shell.
      No inline padding: this border-box width is also the usable content width. */
-  width: min(calc(100% - 2 * var(--min-gutter)), calc(100% - var(--old-gutter)), calc(50% + 474px), calc(75% + 154px));
-  max-width: 2394px;
+  width: calc(min(calc(100% - 2 * var(--min-gutter)), calc(100% - var(--old-gutter)), calc(50% + 474px), calc(75% + 154px)) - 2 * var(--page-inset));
+  max-width: calc(2394px - 2 * var(--page-inset));
   margin-inline: auto;
   padding: 44px 0 56px;
   --roster-cols: 3;
@@ -609,7 +612,9 @@ h1 {
 
 .roster {
   display: grid;
-  grid-template-columns: repeat(var(--roster-cols), minmax(0, 1fr));
+  /* Fixed desktop tracks make natural text wrapping independent of the shell.
+     Tracks may shrink below the portrait width when space is limited. */
+  grid-template-columns: repeat(var(--roster-cols), minmax(0, var(--portrait-size)));
   gap: var(--roster-gap);
   list-style: none;
   margin: 0;
@@ -763,6 +768,7 @@ h1 {
 
   .page {
     --old-gutter: var(--min-gutter);
+    --page-inset: 0px;
     --roster-cols: 2;
     padding: 32px 0 40px;
   }
@@ -774,6 +780,9 @@ h1 {
   }
 
   .nav-links { gap: 14px; flex-wrap: wrap; }
+
+  /* Preserve the existing full-width responsive text columns on small screens. */
+  .roster { grid-template-columns: repeat(var(--roster-cols), minmax(0, 1fr)); }
 
   .hero h1 { line-height: 1.1; }
   .cta { flex-direction: column; align-items: flex-start; gap: 12px; }
