@@ -105,7 +105,8 @@ process.stdout.write(JSON.stringify({hosts, unchanged: before === JSON.stringify
                          "European Conference on Artificial Intelligence (ECAI) (2025)")
         self.assertEqual(home.images[0]["src"], "/assets/images/publications/fig·1.webp")
         self.assertEqual(home.images[0]["alt"], "Figure from " + chosen["title"])
-        self.assertIn("<strong>Blaine Hoak</strong>", result["hosts"]["publications"]["innerHTML"])
+        self.assertIn("Blaine Hoak", result["hosts"]["publications"]["innerHTML"])
+        self.assertNotIn("<strong>Blaine Hoak</strong>", result["hosts"]["publications"]["innerHTML"])
         self.assertTrue(result["unchanged"])
 
     def test_rendered_copy_has_no_dots_but_links_alt_and_gallery_fallback_survive(self):
@@ -139,6 +140,70 @@ process.stdout.write(JSON.stringify({hosts, unchanged: before === JSON.stringify
             markup = result["hosts"][host]["innerHTML"]
             self.assertIn("nofig", markup)
             self.assertFalse(RenderedHTML(markup).figures)
+
+    def test_author_emphasis_excludes_pi_in_both_renderers(self):
+        class AuthorWeights(HTMLParser):
+            def __init__(self, markup):
+                super().__init__()
+                self.depth = 0
+                self.credits = []
+                self.feed(markup)
+
+            def handle_starttag(self, tag, attrs):
+                if tag == 'strong':
+                    self.depth += 1
+
+            def handle_endtag(self, tag):
+                if tag == 'strong':
+                    self.depth -= 1
+
+            def handle_data(self, text):
+                self.credits.append((text, self.depth))
+
+        people = [dict(id='blaine-hoak', name='Blaine Hoak (PI)', role='pi'),
+                  dict(id='abhirup-mukherjee', name='Abhirup Mukherjee', role='phd'),
+                  dict(id='charles-dardaman', name='Charles Dardaman', role='phd')]
+        pub = dict(self.paper(), authors='Blaine Hoak* and Abhirup Mukherjee* and Charles Dardaman and Outside Author')
+        result = self.render_pages([pub], people)
+        for host in ('featured-root', 'publications'):
+            credits = AuthorWeights(result['hosts'][host]['innerHTML']).credits
+            with self.subTest(host=host):
+                self.assertTrue(any('Blaine Hoak*' in t and d == 0 for t, d in credits))
+                self.assertFalse(any('Blaine Hoak' in t and d > 0 for t, d in credits))
+                self.assertTrue(any('Abhirup Mukherjee*' in t and d == 1 for t, d in credits))
+                self.assertTrue(any('Charles Dardaman' in t and d == 1 for t, d in credits))
+                self.assertTrue(any('Outside Author' in t and d == (1 if host == 'featured-root' else 0)
+                                    for t, d in credits))
+        self.assertTrue(result['unchanged'])
+
+    def test_home_preserves_non_pi_emphasis_and_escaped_source_credit(self):
+        authors = "Patrick McDaniel and Blaine Hoak* and A. O'Neil* and Jean & <Jo> and Blaine Hoak"
+        pub = dict(self.paper(), authors=authors)
+        result = self.render_pages([pub])
+        markup = result['hosts']['featured-root']['innerHTML']
+        self.assertIn('<strong>Patrick McDaniel and </strong>Blaine Hoak*', markup)
+        self.assertIn('<strong> and A. O&#39;Neil* and Jean &amp; &lt;Jo&gt; and </strong>Blaine Hoak', markup)
+        self.assertNotIn('<strong>Blaine Hoak', markup)
+        self.assertIn(authors, ''.join(RenderedHTML(markup).text))
+        self.assertTrue(result['unchanged'])
+
+    def test_explicit_public_thesis_and_submissions_do_not_replace_home_feature(self):
+        paper = self.paper()
+        pubs = [dict(paper, key='thesis', title='Public thesis', group='thesis', year=2026, show_lab=True),
+                dict(paper, key='default-thesis', title='Default thesis', group='thesis', year=2026),
+                dict(paper, key='legacy-thesis', title='Legacy thesis', group='thesis', show=True),
+                dict(paper, key='public-submission', title='Public submission', group='submission', show_lab=True),
+                dict(paper, key='private', title='Unrelated private submission', group='submission'), paper]
+        result = self.render_pages(pubs)
+        home = ''.join(RenderedHTML(result['hosts']['featured-root']['innerHTML']).text)
+        research = ''.join(RenderedHTML(result['hosts']['publications']['innerHTML']).text)
+        self.assertIn(paper['title'].replace(' · ', ', '), home)
+        self.assertNotIn('Public thesis', home)
+        self.assertNotIn('Public submission', home)
+        self.assertIn('Public thesis', research)
+        self.assertIn('Public submission', research)
+        for hidden in ('Default thesis', 'Legacy thesis', 'Unrelated private submission'):
+            self.assertNotIn(hidden, research)
 
     def test_visible_punctuation_is_escaped_and_decimal_points_stay(self):
         self.assertEqual(self.render('mod.displayText("AI · Security • Vision & <code> at 1.5")'),

@@ -104,12 +104,13 @@ export function roleLine(person) {
   return person.title || ROLE_LABELS[person.role] || person.role;
 }
 
-// `show_lab` lists or hides an entry on the lab site. A thesis is never listed.
+// `show_lab` lists or hides an entry on the lab site. Theses require an explicit
+// show_lab: true; neither the default nor the legacy alias enables them.
 // `show` is a deprecated alias used by the public snapshot from before the rename.
 // When both are set, `show_lab` wins. An omitted flag lists published work and
 // hides under-review submissions. Year is not a display rule.
 export function shownOnResearch(pub) {
-  if (pub.group === 'thesis') return false;
+  if (pub.group === 'thesis') return pub.show_lab === true;
   const flag = typeof pub.show_lab === 'boolean' ? pub.show_lab
     : typeof pub.show === 'boolean' ? pub.show
     : null;
@@ -130,12 +131,22 @@ export function labAuthorHTML(authors, people) {
   const escapeRegExp = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   for (const person of people || []) {
     const name = String(person.name || '').replace(/\s*\(.*?\)/g, '').trim();
-    if (!name) continue;
+    // Keep other lab members' emphasis; the PI's publication credit is normal text.
+    if (!name || person.id === 'blaine-hoak' || name === 'Blaine Hoak') continue;
     // Match the escaped author string, so names with ', &, or < still bold.
     const re = new RegExp(`\\b${escapeRegExp(displayText(name))}\\b\\*?`, 'g');
     html = html.replace(re, match => `<strong>${match}</strong>`);
   }
   return html;
+}
+
+// Home historically emphasizes the whole author line. Split the source text
+// before escaping so only Blaine's credit (including an optional star) is plain.
+export function featuredAuthorHTML(authors) {
+  return String(authors ?? '').split(/(\bBlaine Hoak\b\*?)/g)
+    .map((part, index) => index % 2 ? displayText(part)
+      : part ? `<strong>${displayText(part)}</strong>` : '')
+    .join('');
 }
 
 export function pubLinksHTML(links) {

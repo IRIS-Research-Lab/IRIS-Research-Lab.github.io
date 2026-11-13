@@ -2,7 +2,7 @@
 import {
   loadJSON, esc, displayText, normalizeTextSeparators, formatDate, photoHTML, roleLine,
   shownOnResearch, byYearThenSource, pubLinksHTML,
-  labAuthorHTML, pubFigureHTML, KIND_LABELS
+  featuredAuthorHTML, pubFigureHTML, KIND_LABELS
 } from './common.js';
 
 const [pubs, news, people] = await Promise.all([
@@ -12,7 +12,7 @@ const [pubs, news, people] = await Promise.all([
 const currentPeople = people.filter(person => !person.alumni);
 // Newest published paper: year descending, then the order in pubs.json.
 const featured = byYearThenSource(
-  pubs.filter(pub => shownOnResearch(pub) && pub.group !== 'submission')
+  pubs.filter(pub => shownOnResearch(pub) && !['submission', 'thesis'].includes(pub.group))
 )[0] || null;
 
 const root = document.getElementById('featured-root');
@@ -25,7 +25,7 @@ if (root && featured) {
         <div class="pub-cite">
           <p class="kicker featured-kicker">${displayText(kind)}, ${displayText(featured.year)}</p>
           <h3 class="featured-title">${displayText(featured.title)}</h3>
-          <p class="featured-meta"><strong>${labAuthorHTML(featured.authors, people)}</strong><br>${displayText(featured.venue)} (${displayText(featured.year)})</p>
+          <p class="featured-meta">${featuredAuthorHTML(featured.authors)}<br>${displayText(featured.venue)} (${displayText(featured.year)})</p>
           ${pubLinksHTML(featured.links)}
         </div>
         ${pubFigureHTML(featured)}

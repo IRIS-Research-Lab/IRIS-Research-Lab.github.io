@@ -59,14 +59,14 @@ Add an object to `data/pubs.json` (order in the file doesn't matter; the site so
 
 - **`key`**: `firstauthorlastname_keyword_year`, lowercase letters, numbers and `_` only. Must be unique.
 - **`authors`**: full names joined with ` and `. Use the same spelling as `data/people.json` so lab members
-  are bolded. For equal contribution, add `*` after the names and `"authornote": "* indicates equal contribution"`.
+  other than Blaine Hoak are bolded. For equal contribution, add `*` after the names and `"authornote": "* indicates equal contribution"`.
 - **`group`**: `conference`, `journal`, `workshop`, `techreport`, `thesis`, or `submission`.
   Papers under review use `submission` and `"show_lab": false`; switch the group once accepted.
-  A `thesis` stays in the file and is not listed on Research.
+  A `thesis` is hidden by default; set `show_lab: true` only for a thesis confirmed public and intended for Research.
 - **`lab`**: `true` for work done in the IRIS Lab.
 - **`show_lab`** (optional boolean): lab-site display flag and the source of truth. `true` lists the entry;
   `false` hides it. Year does not hide an entry. When omitted, a published group is listed and a
-  `submission` stays hidden. `group: thesis` is hidden even when `show_lab` is true. A personal site
+  `submission` stays hidden. `group: thesis` requires explicit `show_lab: true` to be listed; the legacy `show` alias does not enable a thesis. A personal site
   does not read this field. **`show`** is a deprecated alias for the same flag, accepted so a snapshot
   from before the rename still validates. When both are set, `show_lab` wins. New records set only
   `show_lab`.
