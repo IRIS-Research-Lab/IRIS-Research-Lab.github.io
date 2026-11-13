@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://iris-research-lab.github.io/schemas/news.schema.json",
   "title": "IRIS Lab news",
-  "description": "News items. Order does not matter; the site sorts newest first.",
+  "description": "Repository-owned news items served at /data/news.json. Order does not matter; the site sorts newest first.",
   "type": "array",
   "items": {
     "type": "object",

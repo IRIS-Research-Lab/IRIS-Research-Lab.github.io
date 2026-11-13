@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://iris-research-lab.github.io/schemas/people.schema.json",
   "title": "IRIS Lab people",
+  "description": "Repository-owned people served at /data/people.json. Keep public IDs and URLs stable.",
   "type": "array",
   "items": {
     "type": "object",
@@ -26,7 +27,7 @@
       },
       "title": { "description": "Optional custom subtitle shown under the name.", "type": "string" },
       "photo": {
-        "description": "Absolute URL, normally https://iris-research-lab.github.io/assets/images/people/<id>.jpg (square-ish, ~600px).",
+        "description": "Absolute URL of a photo committed in this website repository, normally https://iris-research-lab.github.io/assets/images/people/<id>.jpg (square-ish, ~600px).",
         "type": "string",
         "pattern": "^https://"
       },

@@ -28,7 +28,8 @@ class MarkupTests(unittest.TestCase):
         )""")
         self.assertIn("<strong>A. O&#39;Neil*</strong>", html)
         self.assertIn("<strong>Jean &amp; Jo</strong>", html)
-        self.assertIn("<strong>Blaine Hoak</strong>", html)
+        self.assertIn(" and Blaine Hoak", html)
+        self.assertNotIn("<strong>Blaine Hoak</strong>", html)
         self.assertNotIn("<strong>A. O'Neil", html)
 
     def test_initials_website_link_has_an_accessible_name(self):

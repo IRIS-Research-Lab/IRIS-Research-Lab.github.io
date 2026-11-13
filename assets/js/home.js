@@ -1,8 +1,8 @@
 // Home: the group bio is static in index.html. Featured work, news, and people come from JSON.
 import {
-  loadJSON, esc, formatDate, photoHTML, roleLine,
+  loadJSON, esc, displayText, normalizeTextSeparators, formatDate, photoHTML, roleLine,
   shownOnResearch, byYearThenSource, pubLinksHTML,
-  labAuthorHTML, KIND_LABELS
+  featuredAuthorHTML, pubFigureHTML, KIND_LABELS
 } from './common.js';
 
 const [pubs, news, people] = await Promise.all([
@@ -10,21 +10,31 @@ const [pubs, news, people] = await Promise.all([
 ]);
 
 const currentPeople = people.filter(person => !person.alumni);
-// Newest published paper: year descending, then the order in pubs.json.
+// All highlighted published papers: year descending, then the order in pubs.json.
+// Highlight selection never overrides lab-site visibility or publishes submissions/theses.
 const featured = byYearThenSource(
-  pubs.filter(pub => shownOnResearch(pub) && pub.group !== 'submission')
-)[0] || null;
+  pubs.filter(pub => pub.highlight === true && shownOnResearch(pub)
+    && !['submission', 'thesis'].includes(pub.group))
+);
 
 const root = document.getElementById('featured-root');
-if (root && featured) {
-  const kind = KIND_LABELS[featured.group] || featured.group;
+if (root && featured.length) {
   root.innerHTML = `
     <section class="band" id="featured" aria-labelledby="featured-label">
       <h2 class="section-label" id="featured-label">Featured work</h2>
-      <p class="kicker featured-kicker">${esc(kind)} · ${esc(featured.year)}</p>
-      <h3 class="featured-title">${esc(featured.title)}</h3>
-      <p class="featured-meta"><strong>${labAuthorHTML(featured.authors, people)}</strong><br>${esc(featured.venue)} · ${esc(featured.year)}</p>
-      ${pubLinksHTML(featured.links)}
+      <div class="home-sections">
+      ${featured.map(pub => `
+      <article class="pub featured-work${pub.image ? '' : ' nofig'}">
+        <div class="pub-cite">
+          <p class="kicker featured-kicker">${displayText(KIND_LABELS[pub.group] || pub.group)}, ${displayText(pub.year)}</p>
+          <h3 class="featured-title">${displayText(pub.title)}</h3>
+          <p class="featured-meta">${featuredAuthorHTML(pub.authors)}<br>${displayText(pub.venue)} (${displayText(pub.year)})</p>
+          ${pub.authornote ? `<p class="pub-authornote">${displayText(pub.authornote)}</p>` : ''}
+          ${pubLinksHTML(pub.links)}
+        </div>
+        ${pubFigureHTML(pub)}
+      </article>`).join('')}
+      </div>
     </section>`;
 }
 
@@ -39,6 +49,7 @@ if (newsSection && newsList && newsItems.length) {
       <time datetime="${esc(item.date)}">${formatDate(item.date)}</time>
       <p class="news-body">${item.text}</p>
     </article>`).join('');
+  normalizeTextSeparators(newsList);
 }
 
 const members = document.getElementById('members');
@@ -47,8 +58,8 @@ if (members) {
     <div class="person" id="home-${esc(person.id)}">
       ${photoHTML(person, 'person-photo')}
       <div>
-        <h3>${esc(person.name)}</h3>
-        <div class="role">${esc(roleLine(person))}</div>
+        <h3>${displayText(person.name)}</h3>
+        <div class="role">${displayText(roleLine(person))}</div>
       </div>
     </div>`).join('');
 }

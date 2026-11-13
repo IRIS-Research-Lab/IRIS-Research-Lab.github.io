@@ -1,4 +1,4 @@
-// Research publications. `show_lab` decides the live list. Theses are never listed.
+// Research publications. `show_lab` decides the live list, including opted-in theses.
 import {
   loadJSON, esc, pubArticleHTML, shownOnResearch, byYearThenSource
 } from './common.js';

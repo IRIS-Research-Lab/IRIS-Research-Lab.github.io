@@ -1,44 +1,45 @@
 # Contributing to the IRIS Lab website
 
-News, people, publications, and research themes come from the JSON files in the private
-[IRIS-Updates repository](https://github.com/IRIS-Research-Lab/IRIS-Updates/tree/main/data).
-Edit that content and add new publication figures there; legacy website images remain here. The website generates those public `/data/` files at build time;
-do not copy them into this repository. Lab photos and videos are the exception, listed below.
+News, people, publications, research themes, and the lab gallery are maintained in
+this website repository. Edit the JSON in `data/` and commit the referenced assets
+here in the same pull request. The build copies and validates these files offline
+and preserves the public `/data/` URLs.
 Please don't edit the HTML/JS unless we've talked about it.
 
 | To change...          | Edit                                   | Images go in                       |
 |-----------------------|----------------------------------------|------------------------------------|
-| Publications          | [`data/pubs.json`](https://github.com/IRIS-Research-Lab/IRIS-Updates/blob/main/data/pubs.json)     | IRIS-Updates `assets/images/publications/` |
-| People                | [`data/people.json`](https://github.com/IRIS-Research-Lab/IRIS-Updates/blob/main/data/people.json) | `assets/images/people/`            |
-| News on the home page | [`data/news.json`](https://github.com/IRIS-Research-Lab/IRIS-Updates/blob/main/data/news.json)     | —                                  |
-| Research themes       | [`data/research.json`](https://github.com/IRIS-Research-Lab/IRIS-Updates/blob/main/data/research.json) | —                              |
+| Publications          | [`data/pubs.json`](data/pubs.json)     | `assets/images/publications/` in this repo |
+| People                | [`data/people.json`](data/people.json) | `assets/images/people/`            |
+| News on the home page | [`data/news.json`](data/news.json)     | —                                  |
+| Research themes       | [`data/research.json`](data/research.json) | —                              |
 | Lab photos and videos | [`data/lab_media.json`](data/lab_media.json) in **this** repo | `assets/media/lab/YYYY-MM-DD/` |
 
 > ⚠️ `data/pubs.json` and `data/people.json` are also loaded by Prof. Hoak's personal site (hoak.me).
 > **Never rename or delete a publication `key` or person `id`** once it has been merged, and don't move or
-> rename the files in `IRIS-Updates/data/`. The public website URLs remain unchanged.
+> rename the files in `data/`. Keep public JSON and asset URLs stable for existing consumers.
 
 ## Workflow
 
-1. In **IRIS-Updates**, create a branch: `git checkout -b add-<something>` (or use GitHub's web editor, which does this for you).
-2. Make your edit. Mind the commas: every item in a list is separated by `,` except the last one.
-3. Check it locally from your **website checkout** (with IRIS-Updates alongside it):
+1. In this **website repository**, create a branch: `git checkout -b add-<something>` (or use GitHub's web editor).
+2. Edit the JSON and add any referenced assets in the same branch. Mind the commas: every item in a list is separated by `,` except the last one.
+3. Check locally from the website repo root:
    ```sh
    uv venv
    uv pip install 'jsonschema[format]>=4.18'
-   uv run python scripts/build.py --data-dir ../IRIS-Updates/data
+   uv run python scripts/build.py
+   uv run python scripts/validate.py
+   uv run python -m unittest discover -s tests
    ```
-4. Preview locally (optional): `uv run python -m http.server 8000 --directory _site` from the website repo root, then open
-   <http://localhost:8000>.
-5. Open a pull request in **IRIS-Updates**. Prof. Hoak (or another lab member) should review it before
-   merge. The source merge requests a website build; its validation must pass before publication. If
-   it fails, inspect the website Actions log and fix the source. For a new publication image, commit it under `assets/images/publications/` in the same source PR,
-   then reference its absolute public site URL. Avoid legacy website asset names. Website code PRs
-   retain the **validate** check, which builds against the current public snapshot without private credentials.
+   No token or network access is needed after installing the validation dependency.
+4. Preview locally (optional): `uv run python -m http.server 8000 --directory _site`, then open <http://localhost:8000>.
+5. Open a pull request in this **website repository**. Prof. Hoak (or another lab member) should review it before merge. The required **validate** check builds the repository content and runs the full test suite. A merge to `main` publishes the site; manual dispatch can also publish it.
+
+For a JSON-only preview override, use `--data-dir /path/to/data`. Assets and
+`data/lab_media.json` always come from this checkout, even with that override.
 
 ## Add a paper
 
-Add an object to `data/pubs.json` (order in the file doesn't matter; the site sorts by year):
+Add an object to `data/pubs.json` (the site sorts by year descending, preserving file order within a year):
 
 ```json
 {
@@ -59,24 +60,27 @@ Add an object to `data/pubs.json` (order in the file doesn't matter; the site so
 
 - **`key`**: `firstauthorlastname_keyword_year`, lowercase letters, numbers and `_` only. Must be unique.
 - **`authors`**: full names joined with ` and `. Use the same spelling as `data/people.json` so lab members
-  are bolded. For equal contribution, add `*` after the names and `"authornote": "* indicates equal contribution"`.
+  other than Blaine Hoak are bolded. For equal contribution, add `*` after the names and `"authornote": "* indicates equal contribution"`.
 - **`group`**: `conference`, `journal`, `workshop`, `techreport`, `thesis`, or `submission`.
   Papers under review use `submission` and `"show_lab": false`; switch the group once accepted.
-  A `thesis` stays in the file and is not listed on Research.
+  A `thesis` is hidden by default; set `show_lab: true` only for a thesis confirmed public and intended for Research.
 - **`lab`**: `true` for work done in the IRIS Lab.
 - **`show_lab`** (optional boolean): lab-site display flag and the source of truth. `true` lists the entry;
   `false` hides it. Year does not hide an entry. When omitted, a published group is listed and a
-  `submission` stays hidden. `group: thesis` is hidden even when `show_lab` is true. A personal site
+  `submission` stays hidden. `group: thesis` requires explicit `show_lab: true` to be listed; the legacy `show` alias does not enable a thesis. A personal site
   does not read this field. **`show`** is a deprecated alias for the same flag, accepted so a snapshot
   from before the rename still validates. When both are set, `show_lab` wins. New records set only
   `show_lab`.
 
 - **`research_example`** (optional boolean): marks selected prior work as example content without changing
   `lab` affiliation. It does not by itself select papers for Research.
-- **`highlight`** (optional boolean): personal-site highlight selection, retained for hoak.me compatibility;
-  it does not select papers for IRIS Research.
+- **`highlight`** (optional boolean): selects work for hoak.me highlights and Home Featured work.
+  Home lists every highlighted, lab-visible published paper, by year descending then file order;
+  it excludes theses and submissions even when explicitly visible on Research. Omitted or false
+  means not featured. This flag does not change IRIS Research visibility. A missing image uses
+  the existing full-width citation (`nofig`) without an empty figure or caption.
 - **`image`** (optional): a teaser figure, about 1200px wide, under 2 MiB (PNG/JPEG/WebP/GIF). Commit the file to
-  IRIS-Updates `assets/images/publications/` and use the full `https://iris-research-lab.github.io/...` URL.
+  `assets/images/publications/` in this repo and use the full `https://iris-research-lab.github.io/...` URL.
 - **`links`** (optional): common labels get icons automatically: Paper, Code, Dataset, Poster, Slides,
   Talk, Blog. Put posters/slides PDFs in a public place (e.g. the arXiv page or a repo) and link them.
 - Optional extras: `"award": "Best Paper Award"`, `"talkbadge": "Selected for Oral Presentation"`.

@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://iris-research-lab.github.io/schemas/research.schema.json",
   "title": "IRIS Lab research themes",
+  "description": "Repository-owned research themes served at /data/research.json. Keep public IDs and URLs stable.",
   "type": "array",
   "items": {
     "type": "object",

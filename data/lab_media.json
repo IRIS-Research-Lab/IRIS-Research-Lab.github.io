@@ -8,5 +8,15 @@
     "height": 1200,
     "alt": "A red step ladder with a small black camera mounted on top, cabled to a laptop in the bed of a white pickup truck.",
     "caption": "Field setup"
+  },
+  {
+    "id": "group-photo",
+    "type": "image",
+    "src": "https://iris-research-lab.github.io/assets/media/lab/group-photo/group-photo.webp",
+    "fallback": "https://iris-research-lab.github.io/assets/media/lab/group-photo/group-photo.jpg",
+    "width": 1600,
+    "height": 1200,
+    "alt": "Three people standing together in a lab.",
+    "caption": "Group photo"
   }
 ]

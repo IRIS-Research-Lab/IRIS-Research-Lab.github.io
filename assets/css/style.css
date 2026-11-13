@@ -1,6 +1,6 @@
 /* IRIS Lab V3 North Star
    Tokens ported from the design package (tokens/tokens.css).
-   Geist + Geist Mono variable, Source Serif 4 for the featured title. */
+   Self-hosted Geist, with Source Serif 4 for the Home title. */
 
 @font-face {
   font-family: "Geist";
@@ -43,11 +43,29 @@
   --iris-btn-active: #7bb396;
 
   --font-sans: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-serif: "Source Serif 4", "Source Serif Pro", Georgia, serif;
+  --font-serif: "Source Serif 4", Georgia, serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --space-gutter: 72px;
-  --space-gutter-mobile: 18px;
+  /* Fixed type: 17px grows the round 4 reference by 6.25% at every viewport.
+     Keep the rem hierarchy; only the existing heading step below 900px
+     reduces type on smaller screens. */
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-nav: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+  --text-page: 2.5rem;
+  --text-hero: 3.25rem;
+
+  /* Match People cards and text to the 288px portrait from the 1920px
+     reference. Gallery thumbnails keep their independent responsive sizing. */
+  --portrait-size: 288px;
+  --photo-thumb-size: clamp(180px, 14.5vw, 560px);
+
+  --old-gutter: 72px;
+  --min-gutter: 18px;
+  --page-inset: 12px;
   --focus-ring: 2px solid var(--iris-focus);
   --focus-offset: 2px;
 }
@@ -56,7 +74,10 @@
 *::before,
 *::after { box-sizing: border-box; }
 
-html { color-scheme: light dark; }
+html {
+  color-scheme: light dark;
+  font-size: 17px;
+}
 
 @media (prefers-color-scheme: light) {
   :root {
@@ -85,7 +106,7 @@ body {
   background: var(--iris-bg);
   color: var(--iris-ink);
   font-family: var(--font-sans);
-  font-size: 16px;
+  font-size: var(--text-base);
   font-weight: 400;
   line-height: 1.5;
 }
@@ -124,7 +145,7 @@ a:focus-visible {
   background: var(--iris-mint);
   color: var(--iris-btn-ink);
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--text-sm);
   padding: 8px 12px;
   z-index: 10;
 }
@@ -139,7 +160,17 @@ a:focus-visible {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding: 44px var(--space-gutter) 56px;
+  /* With available width A, the old column was min(A - 2g, 948px, A/2 + 308px).
+     Half its side gaps gives min(A - g, A/2 + 474px, 3A/4 + 154px).
+     Percentages use available width, excluding a classic scrollbar. Keep at least
+     18px on each side and cap at the exact 3840px result above that viewport.
+     Round 5 insets that shell by 12px per desktop side, including its cap.
+     Keep geometry in px so the larger rem type cannot expand the shell.
+     No inline padding: this border-box width is also the usable content width. */
+  width: calc(min(calc(100% - 2 * var(--min-gutter)), calc(100% - var(--old-gutter)), calc(50% + 474px), calc(75% + 154px)) - 2 * var(--page-inset));
+  max-width: calc(2394px - 2 * var(--page-inset));
+  margin-inline: auto;
+  padding: 44px 0 56px;
   --roster-cols: 3;
   --roster-gap: 28px;
 }
@@ -165,8 +196,8 @@ main { flex: 1 0 auto; }
 .logo,
 .logo:link,
 .logo:visited {
-  font-family: var(--font-mono);
-  font-size: 13px;
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -213,7 +244,7 @@ main { flex: 1 0 auto; }
 .nav-links a:link,
 .nav-links a:visited {
   color: var(--iris-muted);
-  font-size: 14px;
+  font-size: var(--text-nav);
   font-weight: 500;
   line-height: 1.2;
   text-decoration: none;
@@ -236,17 +267,25 @@ main { flex: 1 0 auto; }
 
 .kicker,
 .section-label {
-  font-family: var(--font-mono);
-  font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-family: var(--font-sans);
+  text-transform: none;
   color: var(--iris-orange);
   margin: 0 0 14px;
 }
 
-.kicker { font-size: 12px; }
-.section-label { font-size: 11px; }
+.kicker {
+  font-size: 1rem;
+  font-weight: 450;
+  line-height: 1.6;
+  letter-spacing: normal;
+}
+
+.section-label {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.015em;
+}
 
 .section-label .layout-tag {
   color: var(--iris-footer);
@@ -262,66 +301,63 @@ h1 {
   margin: 0 0 16px;
 }
 
-.hero { max-width: 820px; margin-bottom: 44px; }
+.hero { margin-bottom: 44px; }
 
 .hero h1 {
-  font-size: 52px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: var(--text-hero);
   line-height: 1.05;
   letter-spacing: -0.035em;
 }
 
 .page-head { margin-bottom: 28px; }
 .page-head h1 {
-  font-size: 40px;
+  font-size: var(--text-page);
   line-height: 1.1;
   letter-spacing: -0.03em;
   margin-bottom: 10px;
 }
 
 .expand {
-  font-size: 20px;
+  font-size: var(--text-lg);
   font-weight: 500;
   line-height: 1.45;
   color: var(--iris-mint);
-  max-width: 34ch;
   margin: 0 0 18px;
 }
 
 .mission {
-  font-size: 17px;
+  font-size: var(--text-base);
   line-height: 1.65;
   color: var(--iris-muted-2);
-  max-width: 52ch;
   margin: 0;
 }
 
 .lede,
 .page-head p {
-  font-size: 16px;
+  font-size: var(--text-base);
   line-height: 1.55;
   color: var(--iris-muted);
-  max-width: 48ch;
   margin: 0;
 }
 
-/* .page-head p is more specific than .kicker. Restate the eyebrow so it stays orange mono. */
+/* .page-head p is more specific than .kicker. Restate the eyebrow so it stays orange sans. */
 .page-head .kicker {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 450;
+  line-height: 1.6;
+  letter-spacing: normal;
+  text-transform: none;
   color: var(--iris-orange);
   margin: 0 0 14px;
-  max-width: none;
 }
 
 .prose {
-  font-size: 16px;
+  font-size: var(--text-base);
   line-height: 1.65;
   color: var(--iris-muted-2);
-  max-width: 48ch;
 }
 
 .prose p { margin: 0 0 14px; }
@@ -353,7 +389,7 @@ h1 {
   color: var(--iris-btn-ink);
   padding: 12px 16px;
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 600;
   line-height: 1.2;
   text-decoration: none;
@@ -378,23 +414,22 @@ h1 {
 .band {
   padding-top: 36px;
   border-top: 1px solid var(--iris-rule);
-  margin-top: 8px;
+  margin: 0;
 }
 
 .featured-kicker { margin-bottom: 0; }
 
 .featured-title {
-  font-family: var(--font-serif);
-  font-size: 28px;
-  font-weight: 700;
+  font-family: var(--font-sans);
+  font-size: var(--text-xl);
+  font-weight: 650;
   line-height: 1.25;
   color: var(--iris-ink);
-  max-width: 24ch;
   margin: 10px 0 12px;
 }
 
 .featured-meta {
-  font-size: 15px;
+  font-size: var(--text-sm);
   color: var(--iris-muted);
   line-height: 1.55;
   margin: 0 0 14px;
@@ -424,6 +459,13 @@ h1 {
 
 .pub.nofig { grid-template-columns: minmax(0, 1fr); }
 
+/* Home reuses the publication figure and two-column layout without a second rule. */
+.featured-work {
+  padding: 0;
+  border-bottom: 0;
+}
+
+
 .pub-tags {
   display: flex;
   gap: 12px;
@@ -432,49 +474,49 @@ h1 {
 }
 
 .kind {
-  font-family: var(--font-mono);
-  font-size: 11px;
+  font-family: var(--font-sans);
+  font-size: 1rem;
   font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: normal;
+  text-transform: none;
   color: var(--iris-mint);
-  line-height: 1;
+  line-height: 1.5;
 }
 
 .year-tag,
 .news-item time {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
   color: var(--iris-orange);
-  line-height: 1;
+  line-height: 1.5;
 }
 
-.news-item time { font-size: 12px; display: block; margin-bottom: 8px; }
+.news-item time { display: block; margin-bottom: 8px; }
 
 .pub-title {
-  font-size: 20px;
+  font-size: var(--text-xl);
   font-weight: 650;
   line-height: 1.3;
   letter-spacing: -0.015em;
   color: var(--iris-ink);
-  max-width: 48ch;
   margin: 0 0 8px;
   overflow-wrap: break-word;
 }
 
 .pub-authors {
-  font-size: 14px;
+  font-size: var(--text-sm);
   line-height: 1.5;
   color: var(--iris-ink-soft);
-  max-width: 60ch;
   margin: 0 0 6px;
 }
 
 .pub-authors strong { font-weight: 650; }
 
 .pub-authornote {
-  font-size: 14px;
+  font-size: var(--text-sm);
   line-height: 1.5;
   color: var(--iris-ink-soft);
   font-style: italic;
@@ -482,14 +524,17 @@ h1 {
 }
 
 .pub-venue {
-  font-size: 13px;
+  font-size: var(--text-sm);
   line-height: 1.4;
   color: var(--iris-muted);
   margin: 0 0 10px;
 }
 
 .pub-links {
-  font-size: 13px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35em 1em;
+  font-size: var(--text-sm);
   font-weight: 600;
   line-height: 1.3;
   margin: 0;
@@ -511,26 +556,24 @@ h1 {
 .pub-fig figcaption,
 .photo-grid figcaption {
   margin-top: 8px;
-  font-family: var(--font-mono);
-  font-size: 11px;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
   font-weight: 400;
-  line-height: 1.4;
+  line-height: 1.5;
   color: var(--iris-footer);
 }
 
-.lower {
+.pub-fig figcaption { text-align: center; }
+
+.home-sections {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  margin-top: 40px;
-  padding-top: 36px;
-  border-top: 1px solid var(--iris-rule);
+  gap: 40px;
 }
 
-.lower:has(#news-section[hidden]) { grid-template-columns: 1fr; }
+#featured-root:empty { display: none; }
 
 .news-body {
-  font-size: 16px;
+  font-size: var(--text-base);
   font-weight: 400;
   line-height: 1.55;
   color: var(--iris-ink-soft);
@@ -552,7 +595,7 @@ h1 {
 }
 
 .person h3 {
-  font-size: 16px;
+  font-size: var(--text-base);
   font-weight: 600;
   line-height: 1.25;
   margin: 0;
@@ -560,7 +603,7 @@ h1 {
 }
 
 .person .role {
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 500;
   line-height: 1.3;
   color: var(--iris-muted);
@@ -569,7 +612,9 @@ h1 {
 
 .roster {
   display: grid;
-  grid-template-columns: repeat(var(--roster-cols), minmax(0, 1fr));
+  /* Fixed desktop tracks make natural text wrapping independent of the shell.
+     Tracks may shrink below the portrait width when space is limited. */
+  grid-template-columns: repeat(var(--roster-cols), minmax(0, var(--portrait-size)));
   gap: var(--roster-gap);
   list-style: none;
   margin: 0;
@@ -579,7 +624,7 @@ h1 {
 .roster + .section-label { margin-top: 36px; }
 
 .member h2 {
-  font-size: 18px;
+  font-size: var(--text-lg);
   font-weight: 600;
   line-height: 1.25;
   margin: 0 0 4px;
@@ -587,7 +632,7 @@ h1 {
 }
 
 .member .role {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 500;
   line-height: 1.3;
   color: var(--iris-mint);
@@ -599,8 +644,8 @@ h1 {
 }
 
 .member .dates {
-  font-family: var(--font-mono);
-  font-size: 12px;
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
   font-weight: 400;
   line-height: 1.35;
   color: var(--iris-footer);
@@ -608,7 +653,7 @@ h1 {
 }
 
 .member .interests {
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 400;
   line-height: 1.45;
   color: var(--iris-muted);
@@ -634,7 +679,7 @@ h1 {
 .member img,
 .member .person-photo-link,
 .member .person-photo-placeholder {
-  width: 100%;
+  width: min(100%, var(--portrait-size));
   aspect-ratio: 1;
   margin: 0 0 12px;
   height: auto;
@@ -644,6 +689,11 @@ h1 {
 .member .person-photo-link,
 .person .person-photo-link { display: block; }
 
+.member .person-photo-link img {
+  width: 100%;
+  margin-bottom: 0;
+}
+
 .person-photo-link:hover,
 .person-photo-link:focus-visible { text-decoration: none; }
 
@@ -652,8 +702,8 @@ h1 {
   place-items: center;
   background: var(--iris-bg);
   color: var(--iris-mint);
-  font-family: var(--font-mono);
-  font-size: 14px;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
   font-weight: 600;
   letter-spacing: 0.06em;
   box-shadow: inset 0 0 0 1px var(--iris-rule);
@@ -670,16 +720,21 @@ h1 {
 
 .photo-grid figure { margin: 0; }
 
-.photo-grid picture { display: block; }
+.photo-grid picture {
+  display: block;
+  width: min(100%, var(--photo-thumb-size));
+}
 
 .photo-grid img {
-  width: 100%;
+  width: min(100%, var(--photo-thumb-size));
   aspect-ratio: 4 / 3;
   height: auto;
   object-fit: cover;
   object-position: center;
   display: block;
 }
+
+.photo-grid picture img { width: 100%; }
 
 .site-footer {
   flex-shrink: 0;
@@ -689,26 +744,34 @@ h1 {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  font-family: var(--font-mono);
-  font-size: 12px;
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
   font-weight: 400;
   line-height: 1.3;
   color: var(--iris-footer);
 }
 
 .empty {
-  font-size: 16px;
+  font-size: var(--text-base);
   line-height: 1.65;
   color: var(--iris-muted-2);
-  max-width: 48ch;
-}
-
-@media (max-width: 1199px) {
-  .page { --roster-cols: 2; }
 }
 
 @media (max-width: 899px) {
-  .page { padding: 32px var(--space-gutter-mobile) 40px; }
+  :root {
+    --text-xl: 1.5rem;
+    --text-page: 2rem;
+    --text-hero: 2.5rem;
+    --portrait-size: clamp(180px, 32vw, 288px);
+    --photo-thumb-size: clamp(180px, 32vw, 288px);
+  }
+
+  .page {
+    --old-gutter: var(--min-gutter);
+    --page-inset: 0px;
+    --roster-cols: 2;
+    padding: 32px 0 40px;
+  }
 
   .site-nav {
     flex-direction: column;
@@ -718,17 +781,11 @@ h1 {
 
   .nav-links { gap: 14px; flex-wrap: wrap; }
 
-  .hero h1 { font-size: 30px; line-height: 1.1; }
-  .page-head h1 { font-size: 28px; }
-  .expand { font-size: 16px; }
-  .mission { font-size: 16px; }
+  /* Preserve the existing full-width responsive text columns on small screens. */
+  .roster { grid-template-columns: repeat(var(--roster-cols), minmax(0, 1fr)); }
+
+  .hero h1 { line-height: 1.1; }
   .cta { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .featured-title { font-size: 22px; }
-
-  .page { --roster-cols: 1; }
-
-  .lower { display: block; }
-  .lower > section + section { margin-top: 36px; }
 
   .pub {
     grid-template-columns: minmax(0, 1fr);
@@ -736,9 +793,18 @@ h1 {
     padding: 16px 0;
   }
 
-  .pub-title { font-size: 17px; }
+  .featured-work { padding: 0; }
 
   .site-footer { flex-direction: column; }
+}
+
+@media (max-width: 599px) {
+  :root {
+    --portrait-size: clamp(180px, 50vw, 260px);
+    --photo-thumb-size: clamp(180px, 50vw, 260px);
+  }
+
+  .page { --roster-cols: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {

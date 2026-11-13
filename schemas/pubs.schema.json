@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://iris-research-lab.github.io/schemas/pubs.schema.json",
   "title": "IRIS Lab publications",
-  "description": "List of publications. Shared with hoak.me, so keep keys stable once published.",
+  "description": "Repository-owned publications, served at /data/pubs.json. Shared with hoak.me, so keep keys and URLs stable once published.",
   "type": "array",
   "items": {
     "type": "object",
@@ -23,16 +23,16 @@
       "venue": { "description": "Full venue name with abbreviation, e.g. 'USENIX Security Symposium'.", "type": "string", "minLength": 1 },
       "year": { "type": "integer", "minimum": 2000, "maximum": 2100 },
       "group": {
-        "description": "Publication type. thesis is never listed. Under-review entries use submission and show_lab:false so Research omits them until show_lab is set true.",
+        "description": "Publication type. thesis requires explicit show_lab:true. Under-review entries use submission and show_lab:false so Research omits them until show_lab is set true.",
         "enum": ["conference", "journal", "workshop", "techreport", "thesis", "submission"]
       },
       "lab": { "description": "true for work done in the IRIS Lab. Prior work may be included separately as a research_example.", "type": "boolean" },
-      "show_lab": { "description": "Lab-site display flag and source of truth. true lists the entry; false hides it. A thesis is never listed. When omitted, published groups are listed and submission stays hidden, unless the deprecated show alias is set. Year is not a display rule. This field is for the lab site; a personal site can use a different flag. When both show_lab and show are set, show_lab wins.", "type": "boolean" },
+      "show_lab": { "description": "Lab-site display flag and source of truth. true lists the entry; false hides it. A thesis requires explicit show_lab:true. When omitted, published groups are listed and submission stays hidden, unless the deprecated show alias is set. Year is not a display rule. This field is for the lab site; a personal site can use a different flag. When both show_lab and show are set, show_lab wins.", "type": "boolean" },
       "show": { "description": "Deprecated alias for show_lab, kept so a snapshot from before the rename still validates. Ignored when show_lab is present. Do not set this on new records.", "type": "boolean" },
       "research_example": { "description": "Marks selected prior work as example content without changing lab affiliation. Research lists it only when show_lab says so.", "type": "boolean" },
-      "highlight": { "description": "Optional personal-site highlight selection, retained for hoak.me compatibility. Does not control IRIS Research visibility.", "type": "boolean" },
+      "highlight": { "description": "Selects hoak.me highlights and Home Featured work. Home lists every highlighted, lab-visible published paper by year descending then source order, excluding theses and submissions. Omitted or false is not featured. Does not control IRIS Research visibility.", "type": "boolean" },
       "image": {
-        "description": "Absolute URL of a teaser image, normally https://iris-research-lab.github.io/assets/images/publications/<file>.",
+        "description": "Absolute URL of a teaser image committed in this website repository, normally https://iris-research-lab.github.io/assets/images/publications/<file>.",
         "type": "string",
         "pattern": "^https://"
       },
