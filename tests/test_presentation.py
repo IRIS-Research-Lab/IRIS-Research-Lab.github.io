@@ -82,7 +82,7 @@ process.stdout.write(JSON.stringify({hosts, unchanged: before === JSON.stringify
     @staticmethod
     def paper(**extra):
         return dict(
-            key="synthetic_2025", title="Textures <study> · robustness",
+            key="synthetic_2025", title="Textures <study> · robustness", highlight=True,
             authors="Blaine Hoak · Ada & Jo", year=2025, group="conference",
             venue="European Conference on Artificial Intelligence (ECAI)",
             image="https://iris-research-lab.github.io/assets/images/publications/fig·1.webp",
@@ -98,7 +98,7 @@ process.stdout.write(JSON.stringify({hosts, unchanged: before === JSON.stringify
         result = self.render_pages(pubs, [dict(id="blaine", name="Blaine Hoak", role="pi")])
         home = RenderedHTML(result["hosts"]["featured-root"]["innerHTML"])
         research = RenderedHTML(result["hosts"]["publications"]["innerHTML"])
-        self.assertEqual(len(home.figures), 1)
+        self.assertEqual(len(home.figures), 2)
         self.assertEqual(len(research.figures), 2)
         self.assertEqual(home.figures[0], research.figures[0])
         self.assertEqual(home.figures[0]["caption"],
@@ -140,6 +140,60 @@ process.stdout.write(JSON.stringify({hosts, unchanged: before === JSON.stringify
             markup = result["hosts"][host]["innerHTML"]
             self.assertIn("nofig", markup)
             self.assertFalse(RenderedHTML(markup).figures)
+
+    def test_home_features_complete_selection_in_year_then_source_order(self):
+        base = self.paper()
+        pubs = [dict(base, key='old', title='Older highlighted paper', year=2023),
+                dict(base, key='tie-first', title='First 2025 highlight'),
+                dict(base, key='unselected', title='Newer unselected paper', year=2029, highlight=False),
+                dict(base, key='tie-second', title='Second 2025 highlight'),
+                dict(base, key='middle', title='Middle highlighted paper', year=2024),
+                dict(base, key='last', title='Last highlighted paper', year=2021, image=None)]
+        result = self.render_pages(pubs)
+        home = result['hosts']['featured-root']['innerHTML']
+        expected = ['First 2025 highlight', 'Second 2025 highlight', 'Middle highlighted paper',
+                    'Older highlighted paper', 'Last highlighted paper']
+        self.assertEqual(home.count('<article class="pub featured-work'), len(expected))
+        self.assertEqual(home.count('id="featured-label"'), 1)
+        self.assertEqual(sorted(expected, key=home.index), expected)
+        self.assertNotIn('Newer unselected paper', home)
+        self.assertEqual(len(RenderedHTML(home).figures), 4)
+        self.assertIn('featured-work nofig', home)
+        self.assertTrue(result['unchanged'])
+
+    def test_home_highlight_never_overrides_privacy_or_publication_type(self):
+        base = self.paper()
+        pubs = [dict(base, key='hidden', title='Hidden highlighted paper', show_lab=False, show=True),
+                dict(base, key='legacy-hidden', title='Legacy hidden highlight', show=False),
+                dict(base, key='thesis', title='Explicit public thesis', group='thesis', show_lab=True),
+                dict(base, key='submission', title='Explicit public submission', group='submission', show_lab=True),
+                dict(base, key='default-submission', title='Private submission', group='submission'),
+                dict(base, key='no-highlight', title='No highlight flag'),
+                dict(base, key='false-highlight', title='False highlight', highlight=False)]
+        del pubs[-2]['highlight']
+        result = self.render_pages(pubs)
+        self.assertEqual(result['hosts']['featured-root']['innerHTML'], '')
+        research = ''.join(RenderedHTML(result['hosts']['publications']['innerHTML']).text)
+        self.assertIn('Explicit public thesis', research)
+        self.assertIn('Explicit public submission', research)
+        self.assertIn('No highlight flag', research)
+        for title in ('Hidden highlighted paper', 'Legacy hidden highlight', 'Private submission'):
+            self.assertNotIn(title, research)
+        self.assertTrue(result['unchanged'])
+
+    def test_single_home_highlight_preserves_notes_links_and_nofig_fallback(self):
+        pub = dict(self.paper(), image=None, authors='Blaine Hoak* and Ada & Jo*',
+                   authornote='* indicates equal contribution')
+        result = self.render_pages([pub])
+        home = result['hosts']['featured-root']['innerHTML']
+        parsed = RenderedHTML(home)
+        self.assertEqual(home.count('<article class="pub featured-work nofig">'), 1)
+        self.assertFalse(parsed.figures)
+        self.assertFalse(parsed.images)
+        self.assertIn('Blaine Hoak*<strong> and Ada &amp; Jo*</strong>', home)
+        self.assertIn('<p class="pub-authornote">* indicates equal contribution</p>', home)
+        self.assertEqual(parsed.links, [pub['links'][0]['url']])
+        self.assertTrue(result['unchanged'])
 
     def test_author_emphasis_excludes_pi_in_both_renderers(self):
         class AuthorWeights(HTMLParser):

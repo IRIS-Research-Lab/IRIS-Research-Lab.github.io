@@ -38,7 +38,7 @@ Please don't edit the HTML/JS unless we've talked about it.
 
 ## Add a paper
 
-Add an object to `data/pubs.json` (order in the file doesn't matter; the site sorts by year):
+Add an object to `data/pubs.json` (the site sorts by year descending, preserving file order within a year):
 
 ```json
 {
@@ -73,8 +73,11 @@ Add an object to `data/pubs.json` (order in the file doesn't matter; the site so
 
 - **`research_example`** (optional boolean): marks selected prior work as example content without changing
   `lab` affiliation. It does not by itself select papers for Research.
-- **`highlight`** (optional boolean): personal-site highlight selection, retained for hoak.me compatibility;
-  it does not select papers for IRIS Research.
+- **`highlight`** (optional boolean): selects work for hoak.me highlights and Home Featured work.
+  Home lists every highlighted, lab-visible published paper, by year descending then file order;
+  it excludes theses and submissions even when explicitly visible on Research. Omitted or false
+  means not featured. This flag does not change IRIS Research visibility. A missing image uses
+  the existing full-width citation (`nofig`) without an empty figure or caption.
 - **`image`** (optional): a teaser figure, about 1200px wide, under 2 MiB (PNG/JPEG/WebP/GIF). Commit the file to
   IRIS-Updates `assets/images/publications/` and use the full `https://iris-research-lab.github.io/...` URL.
 - **`links`** (optional): common labels get icons automatically: Paper, Code, Dataset, Poster, Slides,

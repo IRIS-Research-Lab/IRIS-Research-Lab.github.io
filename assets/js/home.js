@@ -10,25 +10,30 @@ const [pubs, news, people] = await Promise.all([
 ]);
 
 const currentPeople = people.filter(person => !person.alumni);
-// Newest published paper: year descending, then the order in pubs.json.
+// All highlighted published papers: year descending, then the order in pubs.json.
+// Highlight selection never overrides lab-site visibility or publishes submissions/theses.
 const featured = byYearThenSource(
-  pubs.filter(pub => shownOnResearch(pub) && !['submission', 'thesis'].includes(pub.group))
-)[0] || null;
+  pubs.filter(pub => pub.highlight === true && shownOnResearch(pub)
+    && !['submission', 'thesis'].includes(pub.group))
+);
 
 const root = document.getElementById('featured-root');
-if (root && featured) {
-  const kind = KIND_LABELS[featured.group] || featured.group;
+if (root && featured.length) {
   root.innerHTML = `
     <section class="band" id="featured" aria-labelledby="featured-label">
       <h2 class="section-label" id="featured-label">Featured work</h2>
-      <div class="pub featured-work${featured.image ? '' : ' nofig'}">
+      <div class="home-sections">
+      ${featured.map(pub => `
+      <article class="pub featured-work${pub.image ? '' : ' nofig'}">
         <div class="pub-cite">
-          <p class="kicker featured-kicker">${displayText(kind)}, ${displayText(featured.year)}</p>
-          <h3 class="featured-title">${displayText(featured.title)}</h3>
-          <p class="featured-meta">${featuredAuthorHTML(featured.authors)}<br>${displayText(featured.venue)} (${displayText(featured.year)})</p>
-          ${pubLinksHTML(featured.links)}
+          <p class="kicker featured-kicker">${displayText(KIND_LABELS[pub.group] || pub.group)}, ${displayText(pub.year)}</p>
+          <h3 class="featured-title">${displayText(pub.title)}</h3>
+          <p class="featured-meta">${featuredAuthorHTML(pub.authors)}<br>${displayText(pub.venue)} (${displayText(pub.year)})</p>
+          ${pub.authornote ? `<p class="pub-authornote">${displayText(pub.authornote)}</p>` : ''}
+          ${pubLinksHTML(pub.links)}
         </div>
-        ${pubFigureHTML(featured)}
+        ${pubFigureHTML(pub)}
+      </article>`).join('')}
       </div>
     </section>`;
 }
