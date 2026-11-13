@@ -19,8 +19,8 @@ LAB_MEDIA_PREFIX = "assets/media/lab/"
 MAX_LAB_IMAGE_BYTES = 2 * 1024 * 1024
 MAX_LAB_VIDEO_BYTES = 10 * 1024 * 1024
 parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument("--data-dir", type=Path, default=ROOT / "_site" / "data",
-                    help="Directory containing the four content files (default: _site/data)")
+parser.add_argument("--data-dir", type=Path, default=ROOT / "data",
+                    help="Directory containing all five content files (default: repository data/)")
 parser.add_argument("--asset-root", type=Path, default=None,
                     help="Public asset root (default: _site for generated data, checkout otherwise)")
 args = parser.parse_args()
@@ -67,7 +67,7 @@ for name, (schema_name, unique) in FILES.items():
     try:
         data = json.loads((DATA / name).read_text(encoding="utf-8"))
     except OSError as e:
-        err(name, f"cannot read {DATA / name}: {e}. Run scripts/build.py first.")
+        err(name, f"cannot read {DATA / name}: {e}. Check the repository data files or --data-dir.")
         continue
     except json.JSONDecodeError as e:
         err(name, f"invalid JSON at line {e.lineno}, column {e.colno}: {e.msg}")
